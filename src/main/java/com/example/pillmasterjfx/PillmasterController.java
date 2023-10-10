@@ -40,26 +40,6 @@ public class PillmasterController {
         adherencePause.setOnFinished(se -> {
             numFailed++;
         });
-
-        /*
-        sched = new SchedulerService();
-        sched.setOnRunning(e -> {
-            System.out.println("Starting alert");
-            Alert popup = new Alert(Alert.AlertType.CONFIRMATION);
-            popup.setOnHidden(he -> {
-                System.out.println("Alert done!");
-                pause.stop();
-            });
-            popup.show();
-            pause.play();
-        });
-        sched.setDelay(javafx.util.Duration.seconds(5));
-        sched.setPeriod(javafx.util.Duration.seconds(5));
-        sched.start();
-
-         */
-
-
     }
 
     public void scheduleMedication(Medication medication) {
@@ -75,6 +55,7 @@ public class PillmasterController {
         });
         //get the current seconds in current minute
         int currentSeconds = LocalDateTime.now().getSecond();
+        System.out.println(currentSeconds);
         switch(medication.getSchedule()) {
             case DAILY:
                 int tmp = MIDDAY_HOUR - currentSeconds;
