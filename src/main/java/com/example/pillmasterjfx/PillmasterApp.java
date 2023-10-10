@@ -10,9 +10,9 @@ import java.io.IOException;
 public class PillmasterApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(PillmasterApp.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(PillmasterApp.class.getResource("base-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 400);
-        stage.setTitle("Hello!");
+        stage.setTitle("Pillmaster-Demo");
         stage.setScene(scene);
         stage.show();
     }

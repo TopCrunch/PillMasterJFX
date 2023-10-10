@@ -16,6 +16,11 @@ public class Medication {
         this.schedule = schedule;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s, %d, %s",name,count,schedule.toString());
+    }
+
     public String getName() {
         return name;
     }
