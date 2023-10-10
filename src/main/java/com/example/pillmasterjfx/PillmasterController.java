@@ -1,9 +1,12 @@
 package com.example.pillmasterjfx;
 
+import javafx.animation.PauseTransition;
 import javafx.concurrent.ScheduledService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,32 +16,40 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class PillmasterController {
-    private static final int NUM_SCHEDULE_THREADS = 1;
-    private final ScheduledExecutorService alertScheduler =
-            Executors.newScheduledThreadPool(NUM_SCHEDULE_THREADS);
-    private ArrayList<Calendar> alertCalendar;
     SchedulerService sched;
-
+    private int numFailed = 0;
 
     @FXML
     public void initialize() {
         System.out.println("FXML file loaded!");
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(5));
+        pause.setOnFinished(se -> {
+            numFailed++;
+        });
+
         sched = new SchedulerService();
-        sched.setOnSucceeded(e -> {
+        sched.setOnRunning(e -> {
             System.out.println("Starting alert");
             Alert popup = new Alert(Alert.AlertType.CONFIRMATION);
-            popup.showAndWait();
-            System.out.println("Alert done!");
+            popup.setOnHidden(he -> {
+                System.out.println("Alert done!");
+                pause.stop();
+            });
+            popup.show();
+            pause.play();
         });
         sched.setDelay(javafx.util.Duration.seconds(5));
         sched.setPeriod(javafx.util.Duration.seconds(5));
         sched.start();
+
+
     }
     @FXML
     private Label welcomeText;
 
     @FXML
     protected void onHelloButtonClick() {
-        welcomeText.setText("The button works!");
+        welcomeText.setText(Integer.toString(numFailed));
     }
 }
