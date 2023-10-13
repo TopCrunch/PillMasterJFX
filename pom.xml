@@ -107,7 +107,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.example.pillmasterjfx/com.example.pillmasterjfx.PillmasterApp
+                                com.example.pillmasterjfx.PillmasterApp
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
@@ -129,7 +129,7 @@
                         <transformer
                                 implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <mainClass>
-                                com.example.pillmasterjfx/com.example.pillmasterjfx.PillmasterApp
+                                com.example.pillmasterjfx.PillmasterApp
                             </mainClass>
                         </transformer>
                     </transformers>
