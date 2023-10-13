@@ -10,8 +10,10 @@ import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import jssc.SerialPortException;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +29,8 @@ public class PillmasterController {
     SchedulerService sched;
     private int numFailed = 0;
 
+    SerialController serialController;
+
     PauseTransition adherencePause = new PauseTransition(Duration.seconds(5));
 
     public PillmasterController() {
@@ -36,6 +40,11 @@ public class PillmasterController {
     @FXML
     public void initialize() {
         System.out.println("FXML file loaded!");
+        try {
+            serialController = new SerialController();
+        } catch(SerialPortException e) {
+            System.out.println(e.getMessage());
+        }
 
         adherencePause.setOnFinished(se -> {
             numFailed++;
@@ -118,5 +127,10 @@ public class PillmasterController {
         });
 
         stage.showAndWait();
+    }
+
+    @FXML
+    protected void onTestButtonClick() throws SerialPortException {
+        serialController.writeToPort('b');
     }
 }

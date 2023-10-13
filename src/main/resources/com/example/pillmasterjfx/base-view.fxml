@@ -15,6 +15,9 @@
           <Label fx:id="valueLabel" />
       </children>
    </HBox>
-   <HBox prefHeight="100.0" prefWidth="200.0" />
+   <HBox prefHeight="100.0" prefWidth="200.0">
+      <children>
+         <Button fx:id="testButton" onAction="#onTestButtonClick" text="Test send 'b'" textAlignment="CENTER" />
+      </children></HBox>
    <HBox prefHeight="100.0" prefWidth="200.0" />
 </VBox>

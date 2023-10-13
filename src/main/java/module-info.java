@@ -6,6 +6,7 @@ module com.example.pillmasterjfx {
     requires com.dlsc.formsfx;
     requires net.synedra.validatorfx;
     requires org.kordamp.bootstrapfx.core;
+    requires jssc;
 
     opens com.example.pillmasterjfx to javafx.fxml;
     exports com.example.pillmasterjfx;
