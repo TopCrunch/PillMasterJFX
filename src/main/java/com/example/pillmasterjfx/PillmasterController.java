@@ -1,10 +1,8 @@
 package com.example.pillmasterjfx;
 
-import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
@@ -12,10 +10,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import jssc.SerialPortException;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.Serial;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,21 +21,19 @@ public class PillmasterController {
     private static final int NIGHT_HOUR = 45;
     private static final int MIDDAY_HOUR = 30;
     private static final int MORNING_HOUR = 15;
+    private static final String TEST_JSON_FILE = "sample-meds.json";
     private final HashMap<Medication, Boolean> runningMedicationMap;
     public Button newMedButton;
-    SchedulerService sched;
-    private int numFailed = 0;
+    MedicationScheduler medicationScheduler;
+    File jsonFile;
 
     SerialController serialController;
-
-    PauseTransition adherencePause = new PauseTransition(Duration.seconds(5));
-
     public PillmasterController() {
         runningMedicationMap = new HashMap<>();
     }
 
     @FXML
-    public void initialize() {
+    public void initialize() throws IOException {
         System.out.println("FXML file loaded!");
         try {
             serialController = new SerialController();
@@ -46,56 +41,41 @@ public class PillmasterController {
             System.out.println(e.getMessage());
         }
 
-        adherencePause.setOnFinished(se -> {
-            numFailed++;
-        });
+        jsonFile = new File(TEST_JSON_FILE);
+
+        if(jsonFile.createNewFile()){
+            System.out.println(jsonFile.getName() + " created!");
+        }
+        startSchedulerService();
+
     }
 
-    public void scheduleMedication(Medication medication) {
-        sched = new SchedulerService();
-        sched.setOnRunning(e -> {
-            System.out.println("Alert for " + medication);
-            Alert popup = new Alert(Alert.AlertType.CONFIRMATION);
-            popup.setOnHidden(he -> {
-                adherencePause.stop();
-            });
-            popup.show();
-            adherencePause.play();
-        });
+    public void startSchedulerService() {
+        medicationScheduler = new MedicationScheduler();
         //get the current seconds in current minute
         int currentSeconds = LocalDateTime.now().getSecond();
         System.out.println(currentSeconds);
-        switch(medication.getSchedule()) {
-            case DAILY:
-                int tmp = MIDDAY_HOUR - currentSeconds;
-                if(tmp > 0) {
-                    sched.setDelay(javafx.util.Duration.seconds(tmp));
-                } else {
-                    //add negative value to loop-around to meet next time
-                    sched.setDelay(javafx.util.Duration.seconds(60 + tmp));
-                }
-                    sched.setPeriod(javafx.util.Duration.seconds(60));
-                sched.start();
-                System.out.println(medication + " scheduled");
-                break;
-            case TWICE:
-                break;
-            case THRICE:
-                break;
-            default:
-        }
+        //medicationScheduler.setDelay(Duration.seconds(60 - currentSeconds));
+        System.out.println("Waiting " + (60 - currentSeconds) + " seconds");
+        System.out.println(System.getProperty("user.dir"));
+        medicationScheduler.setPeriod(Duration.minutes(1));
+        medicationScheduler.setOnSucceeded(e -> {
+            System.out.println("Scheduler completed successfully...");
+        });
+        medicationScheduler.start();
     }
 
     public void addMedication(Medication medication) {
-        runningMedicationMap.put(medication, false);
-        touchMedicationList();
+        //runningMedicationMap.put(medication, false);
+        //touchMedicationList();
+        medicationScheduler.addNewMedication(medication);
     }
 
     public void touchMedicationList() {
         for (Map.Entry<Medication, Boolean> entry
                 : runningMedicationMap.entrySet()){
             if(!entry.getValue()) {
-                scheduleMedication(entry.getKey());
+                //startSchedulerService(entry.getKey());
             }
         }
     }
