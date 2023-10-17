@@ -5,90 +5,234 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="600.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pillmasterjfx.MedicationFormController">
+<VBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pillmasterjfx.MedicationFormController">
    <children>
-      <TextField fx:id="medicationField" alignment="CENTER" promptText="Enter medication name...">
-         <font>
-            <Font size="20.0" />
-         </font></TextField>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
+      <VBox fx:id="primaryEntryGroup" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="600.0" spacing="20.0">
          <children>
-            <ToggleButton fx:id="dailyButton" mnemonicParsing="false" text="DAILY">
-               <toggleGroup>
-                  <ToggleGroup fx:id="scheduleToggle" />
-               </toggleGroup>
+            <TextField fx:id="medicationField" alignment="CENTER" promptText="Enter medication name...">
                <font>
                   <Font size="20.0" />
                </font>
-            </ToggleButton>
-            <ToggleButton fx:id="twiceButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="TWICE" toggleGroup="$scheduleToggle">
+            </TextField>
+            <TextField fx:id="quantityField" alignment="CENTER" layoutX="30.0" layoutY="78.0" promptText="Enter medication quantity...">
                <font>
                   <Font size="20.0" />
-               </font></ToggleButton>
-            <ToggleButton fx:id="thriceButton" layoutX="99.0" layoutY="10.0" mnemonicParsing="false" text="THRICE" toggleGroup="$scheduleToggle">
-               <font>
-                  <Font size="20.0" />
-               </font></ToggleButton>
-            <HBox alignment="CENTER">
+               </font>
+            </TextField>
+            <HBox fx:id="dayButtonGroup" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <VBox alignment="CENTER">
-                     <children>
-                        <Button fx:id="upHourButton" mnemonicParsing="false" onAction="#onUpHourButtonClick" prefHeight="20.0" prefWidth="30.0" text="^" />
-                        <Label fx:id="hourLabel" alignment="CENTER" contentDisplay="CENTER" text="0">
-                           <font>
-                              <Font size="20.0" />
-                           </font></Label>
-                        <Button fx:id="downHourButton" mnemonicParsing="false" onAction="#onDownHourButtonClick" prefHeight="20.0" prefWidth="30.0" text="v" />
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0">
-                     <children>
-                        <Button fx:id="upMinuteButton" mnemonicParsing="false" onAction="#onUpMinuteButtonClick" prefHeight="20.0" prefWidth="30.0" text="^" />
-                        <Label fx:id="minuteLabel" alignment="CENTER" contentDisplay="CENTER" text="0">
-                           <font>
-                              <Font size="20.0" />
-                           </font></Label>
-                        <Button fx:id="downMinuteButton" mnemonicParsing="false" onAction="#onDownMinuteButtonClick" prefHeight="20.0" prefWidth="30.0" text="v" />
-                     </children>
-                  </VBox>
-                  <Label fx:id="periodLabel" alignment="CENTER" contentDisplay="CENTER" text="AM">
+                  <ToggleButton fx:id="monButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDayButtonToggled" prefHeight="40.0" prefWidth="80.0" text="Mon">
                      <font>
                         <Font size="20.0" />
-                     </font></Label>
+                     </font>
+                  </ToggleButton>
+                  <ToggleButton fx:id="tuesButton" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDayButtonToggled" prefHeight="40.0" prefWidth="80.0" text="Tues">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </ToggleButton>
+                  <ToggleButton fx:id="wedButton" layoutX="150.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDayButtonToggled" prefHeight="40.0" prefWidth="80.0" text="Wed">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </ToggleButton>
+                  <ToggleButton fx:id="thursButton" layoutX="230.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDayButtonToggled" prefHeight="40.0" prefWidth="80.0" text="Thurs">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </ToggleButton>
+                  <ToggleButton fx:id="friButton" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDayButtonToggled" prefHeight="40.0" prefWidth="80.0" text="Fri">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </ToggleButton>
+                  <ToggleButton fx:id="satButton" layoutX="330.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDayButtonToggled" prefHeight="40.0" prefWidth="80.0" text="Sat">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </ToggleButton>
+                  <ToggleButton fx:id="sunButton" layoutX="410.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDayButtonToggled" prefHeight="40.0" prefWidth="80.0" text="Sun">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </ToggleButton>
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                     <left>
+                        <Button fx:id="cancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onCancelClick" text="CANCEL" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Button>
+                     </left>
+                     <right>
+                        <Button fx:id="nextButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onNextClick" text="NEXT" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Button>
+                     </right>
+                  </BorderPane>
                </children>
             </HBox>
          </children>
          <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
-      </HBox>
-      <TextField fx:id="quantityField" alignment="CENTER" layoutX="30.0" layoutY="78.0" promptText="Enter medication quantity...">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </TextField>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      </VBox>
+      <VBox fx:id="secondaryEntryGroup" alignment="CENTER" prefHeight="300.0" prefWidth="600.0" spacing="20.0" visible="false">
          <children>
-            <BorderPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-               <left>
-                  <Button fx:id="cancelButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onCancelClick" text="CANCEL" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
+               <children>
+                  <ToggleButton fx:id="dailyButton" mnemonicParsing="false" onAction="#onScheduleButtonToggle" text="DAILY">
                      <font>
                         <Font size="20.0" />
                      </font>
-                  </Button>
-               </left>
-               <right>
-                  <Button fx:id="confirmButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onConfirmClick" text="CONFIRM" BorderPane.alignment="CENTER">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="scheduleToggle" />
+                     </toggleGroup>
+                  </ToggleButton>
+                  <ToggleButton fx:id="twiceButton" mnemonicParsing="false" onAction="#onScheduleButtonToggle" text="TWICE" toggleGroup="$scheduleToggle">
                      <font>
                         <Font size="20.0" />
                      </font>
-                  </Button>
-               </right>
-            </BorderPane>
+                  </ToggleButton>
+                  <ToggleButton fx:id="thriceButton" mnemonicParsing="false" onAction="#onScheduleButtonToggle" text="THRICE" toggleGroup="$scheduleToggle">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </ToggleButton>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
+               <children>
+                  <HBox fx:id="timeGroupA" alignment="CENTER">
+                     <children>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <Button fx:id="upHourButtonA" mnemonicParsing="false" onAction="#onUpHourButtonClick" prefHeight="20.0" prefWidth="30.0" text="^" />
+                              <Label fx:id="hourLabelA" alignment="CENTER" contentDisplay="CENTER" text="0">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="downHourButtonA" mnemonicParsing="false" onAction="#onDownHourButtonClick" prefHeight="20.0" prefWidth="30.0" text="v" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0">
+                           <children>
+                              <Button fx:id="upMinuteButtonA" mnemonicParsing="false" onAction="#onUpMinuteButtonClick" prefHeight="20.0" prefWidth="30.0" text="^" />
+                              <Label fx:id="minuteLabelA" alignment="CENTER" contentDisplay="CENTER" text="0">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="downMinuteButtonA" mnemonicParsing="false" onAction="#onDownMinuteButtonClick" prefHeight="20.0" prefWidth="30.0" text="v" />
+                           </children>
+                        </VBox>
+                        <Label fx:id="periodLabelA" alignment="CENTER" contentDisplay="CENTER" text="AM">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="timeGroupB" alignment="CENTER" layoutX="245.0" layoutY="20.0">
+                     <children>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <Button fx:id="upHourButtonB" mnemonicParsing="false" onAction="#onUpHourButtonClick" prefHeight="20.0" prefWidth="30.0" text="^" />
+                              <Label fx:id="hourLabelB" alignment="CENTER" contentDisplay="CENTER" text="0">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="downHourButtonB" mnemonicParsing="false" onAction="#onDownHourButtonClick" prefHeight="20.0" prefWidth="30.0" text="v" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0">
+                           <children>
+                              <Button fx:id="upMinuteButtonB" mnemonicParsing="false" onAction="#onUpMinuteButtonClick" prefHeight="20.0" prefWidth="30.0" text="^" />
+                              <Label fx:id="minuteLabelB" alignment="CENTER" contentDisplay="CENTER" text="0">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="downMinuteButtonB" mnemonicParsing="false" onAction="#onDownMinuteButtonClick" prefHeight="20.0" prefWidth="30.0" text="v" />
+                           </children>
+                        </VBox>
+                        <Label fx:id="periodLabelB" alignment="CENTER" contentDisplay="CENTER" text="AM">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="timeGroupC" alignment="CENTER" layoutX="315.0" layoutY="20.0">
+                     <children>
+                        <VBox alignment="CENTER">
+                           <children>
+                              <Button fx:id="upHourButtonC" mnemonicParsing="false" onAction="#onUpHourButtonClick" prefHeight="20.0" prefWidth="30.0" text="^" />
+                              <Label fx:id="hourLabelC" alignment="CENTER" contentDisplay="CENTER" text="0">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="downHourButtonC" mnemonicParsing="false" onAction="#onDownHourButtonClick" prefHeight="20.0" prefWidth="30.0" text="v" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0">
+                           <children>
+                              <Button fx:id="upMinuteButtonC" mnemonicParsing="false" onAction="#onUpMinuteButtonClick" prefHeight="20.0" prefWidth="30.0" text="^" />
+                              <Label fx:id="minuteLabelC" alignment="CENTER" contentDisplay="CENTER" text="0">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="downMinuteButtonC" mnemonicParsing="false" onAction="#onDownMinuteButtonClick" prefHeight="20.0" prefWidth="30.0" text="v" />
+                           </children>
+                        </VBox>
+                        <Label fx:id="periodLabelC" alignment="CENTER" contentDisplay="CENTER" text="AM">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                     <left>
+                        <Button fx:id="backButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onBackClick" text="BACK" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Button>
+                     </left>
+                     <right>
+                        <Button fx:id="confirmButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onConfirmClick" text="CONFIRM" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Button>
+                     </right>
+                  </BorderPane>
+               </children>
+            </HBox>
          </children>
-      </HBox>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding></VBox>
    </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
 </VBox>

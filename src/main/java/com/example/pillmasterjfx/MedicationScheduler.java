@@ -103,7 +103,9 @@ public class MedicationScheduler extends ScheduledService<Integer> {
                 Medication medication = new Medication(
                     entry.getString("name"),
                     entry.getInt("count"),
-                    entry.getString("schedule")
+                    entry.getString("schedule"),
+                    entry.getJSONArray("days"),
+                    entry.getJSONArray("hours")
                 );
                 medicationMap.put(medication.getName(),medication);
             }
