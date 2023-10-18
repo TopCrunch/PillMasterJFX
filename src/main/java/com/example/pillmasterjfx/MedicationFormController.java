@@ -56,6 +56,7 @@ public class MedicationFormController {
     public VBox primaryEntryGroup;
     public HBox dayButtonGroup;
     public Button backButton;
+    public HBox scheduleGroup;
 
     private Medication medication;
 
@@ -130,6 +131,7 @@ public class MedicationFormController {
     @FXML
     public void onScheduleButtonToggle(ActionEvent e) {
         Toggle button = scheduleToggle.getSelectedToggle();
+        scheduleGroup.setStyle(null);
         if(button != null) {
             switch (button.getUserData().toString()) {
                 case "DAILY" -> {
@@ -187,36 +189,43 @@ public class MedicationFormController {
 
     @FXML
     public void onConfirmClick(ActionEvent e) {
-        ArrayList<HourMinuteCounter> tmpTime = new ArrayList<>();
-        ArrayList<DayOfWeek> tmpDay = new ArrayList<>();
+        boolean valuesEntered = true;
+        if(scheduleToggle.getSelectedToggle() == null) {
+            scheduleGroup.setStyle("-fx-border-color: red; " +
+                    "-fx-border-width: 3px");
+            valuesEntered = false;
+        }
+        if(valuesEntered) {
+            ArrayList<HourMinuteCounter> tmpTime = new ArrayList<>();
+            ArrayList<DayOfWeek> tmpDay = new ArrayList<>();
 
-        for(ToggleButton button : dayButtonList) {
-            if(button.isSelected()){
-                tmpDay.add((DayOfWeek)button.getUserData());
+            for (ToggleButton button : dayButtonList) {
+                if (button.isSelected()) {
+                    tmpDay.add((DayOfWeek) button.getUserData());
+                }
             }
-        }
 
-        Medication.Schedule schedule =
-                (Medication.Schedule)scheduleToggle.getSelectedToggle().getUserData();
-        switch(schedule.toString()) {
-            case "THRICE":
-                tmpTime.add(0,timeC);
-            case"TWICE":
-                tmpTime.add(0,timeB);
-            case "DAILY":
-                tmpTime.add(0,timeA);
-                break;
+            Medication.Schedule schedule =
+                    (Medication.Schedule) scheduleToggle.getSelectedToggle().getUserData();
+            switch (schedule.toString()) {
+                case "THRICE":
+                    tmpTime.add(0, timeC);
+                case "TWICE":
+                    tmpTime.add(0, timeB);
+                case "DAILY":
+                    tmpTime.add(0, timeA);
+                    break;
+            }
+            medication = new Medication(
+                    medicationField.getText(),
+                    Integer.parseInt(quantityField.getText()),
+                    schedule,
+                    tmpDay,
+                    tmpTime
+            );
+            System.out.println("Entry confirmed!");
+            ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
         }
-        tmpTime.add(timeA);
-        medication = new Medication(
-                medicationField.getText(),
-                Integer.parseInt(quantityField.getText()),
-                schedule,
-                tmpDay,
-                tmpTime
-        );
-        System.out.println("Entry confirmed!");
-        ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
     }
 
     @FXML
