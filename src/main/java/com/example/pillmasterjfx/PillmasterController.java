@@ -111,6 +111,9 @@ public class PillmasterController {
 
     @FXML
     protected void onTestButtonClick() throws SerialPortException {
-        serialController.writeToPort('b');
+        // TODO: 10/21/2023 move serial usage to Dispenser.java
+        //serialController.writeToPort('b');
+        Dispenser dispenser = new Dispenser();
+        dispenser.dispense();
     }
 }
