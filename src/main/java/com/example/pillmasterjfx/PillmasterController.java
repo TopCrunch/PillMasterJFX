@@ -114,6 +114,10 @@ public class PillmasterController {
         // TODO: 10/21/2023 move serial usage to Dispenser.java
         //serialController.writeToPort('b');
         Dispenser dispenser = new Dispenser();
-        dispenser.dispense();
+        try {
+            dispenser.testMethod();
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
