@@ -14,10 +14,13 @@ import org.json.JSONObject;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class MedicationScheduler extends ScheduledService<Integer> {
     public static final String JSON_PATH = "sample-meds.json";
+    private static final int SECONDS_IN_DAY = 86400;
+    private static final int DEMO_INTERVAL_SECONDS = 72;
     private final Timeline timeline;
     private JSONArray medArray;
     private final HashMap<String, Medication> medicationMap;
@@ -38,17 +41,39 @@ public class MedicationScheduler extends ScheduledService<Integer> {
                         return 0;
                     }
                 } else {
-                    System.out.println("!!! Could not open JSON file !!!");
+                    System.out.println("There was an error reading the JSON " +
+                            "file...");
                     return 0;
                 }
+
+                //TODO have task update its own period to be midnight next
+                // and test for restarting tweaks
 
                 populateMedicationMap(medArray);
                 timeline.setCycleCount(1);
                 checkDailyMeds();
 
+                //reschedule self to next midnight (unless demo)
+                setPeriod(timeToMidnight());
+
                 return 1;
             }
         };
+    }
+
+    private Duration timeToMidnight() {
+        //this is only for demo timings
+        int currentSecond = LocalDateTime.now().getSecond();
+        int currentMinute = LocalDateTime.now().getMinute();
+        int currentHour = LocalDateTime.now().getHour();
+        int secondsSinceMidnight =
+                currentSecond + currentMinute*60 + currentHour*3600;
+        int value = secondsSinceMidnight % DEMO_INTERVAL_SECONDS;
+
+        //Debug value output
+        System.out.println(value + " seconds until next interval");
+
+        return Duration.seconds(value);
     }
 
     private void checkDailyMeds() {
@@ -115,7 +140,8 @@ public class MedicationScheduler extends ScheduledService<Integer> {
     private JSONObject openJSONFile(String path) throws IOException {
             String stream = new String(Files.readAllBytes(Paths.get(path)));
             if(stream.length() > 0) {
-                return new JSONObject(stream);
+                JSONObject tmp = new JSONObject(stream);
+                return tmp;
             } else {
                 return null;
             }

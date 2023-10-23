@@ -52,16 +52,24 @@ public class PillmasterController {
 
     public void startSchedulerService() {
         medicationScheduler = new MedicationScheduler();
+        /*
         //get the current seconds in current minute
         int currentSeconds = LocalDateTime.now().getSecond();
         System.out.println(currentSeconds);
-        //medicationScheduler.setDelay(Duration.seconds(60 - currentSeconds));
+        medicationScheduler.setDelay(Duration.seconds(60 - currentSeconds));
         System.out.println("Waiting " + (60 - currentSeconds) + " seconds");
-        System.out.println(System.getProperty("user.dir"));
         medicationScheduler.setPeriod(Duration.minutes(1));
+        */
         medicationScheduler.setOnSucceeded(e -> {
             System.out.println("Scheduler completed successfully...");
         });
+        medicationScheduler.setOnFailed(e -> {
+            System.err.println("Scheduler failed!");
+            medicationScheduler.getException().printStackTrace(System.err);
+            System.err.println("Retrying...");
+            medicationScheduler.setPeriod(Duration.seconds(5));
+        });
+        medicationScheduler.setRestartOnFailure(true);
         medicationScheduler.start();
     }
 
