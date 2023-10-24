@@ -20,11 +20,23 @@ import java.util.HashMap;
 public class MedicationScheduler extends ScheduledService<Integer> {
     public static final String JSON_PATH = "sample-meds.json";
     private static final int SECONDS_IN_DAY = 86400;
+    private static final int MINUTES_IN_DAY = 1440;
     private static final int DEMO_INTERVAL_SECONDS = 72;
     private final Timeline timeline;
     private JSONArray medArray;
     private final HashMap<String, Medication> medicationMap;
     private final PauseTransition adherencePause;
+
+
+    public MedicationScheduler() {
+        medicationMap = new HashMap<>();
+        timeline = new Timeline();
+        adherencePause = new PauseTransition(Duration.seconds(5));
+        adherencePause.setOnFinished(se -> {
+            System.out.println("ADHERENCE FAILED");
+        });
+    }
+
     @Override
     protected Task<Integer> createTask() {
         return new Task<>() {
@@ -46,9 +58,6 @@ public class MedicationScheduler extends ScheduledService<Integer> {
                     return 0;
                 }
 
-                //TODO have task update its own period to be midnight next
-                // and test for restarting tweaks
-
                 populateMedicationMap(medArray);
                 timeline.setCycleCount(1);
                 checkDailyMeds();
@@ -63,17 +72,20 @@ public class MedicationScheduler extends ScheduledService<Integer> {
 
     private Duration timeToMidnight() {
         //this is only for demo timings
-        int currentSecond = LocalDateTime.now().getSecond();
-        int currentMinute = LocalDateTime.now().getMinute();
-        int currentHour = LocalDateTime.now().getHour();
-        int secondsSinceMidnight =
-                currentSecond + currentMinute*60 + currentHour*3600;
-        int value = secondsSinceMidnight % DEMO_INTERVAL_SECONDS;
+        int value = getSecondsSinceMidnight() % DEMO_INTERVAL_SECONDS;
 
         //Debug value output
         System.out.println(value + " seconds until next interval");
 
         return Duration.seconds(value);
+    }
+
+    private int getSecondsSinceMidnight() {
+        LocalDateTime current = LocalDateTime.now();
+        return (current.getSecond()
+                + current.getMinute()*60
+                + current.getHour()*3600
+        );
     }
 
     private void checkDailyMeds() {
@@ -157,15 +169,6 @@ public class MedicationScheduler extends ScheduledService<Integer> {
         FileWriter writer = new FileWriter(JSON_PATH);
         writer.write(top.toString());
         writer.close();
-    }
-
-    public MedicationScheduler() {
-        medicationMap = new HashMap<>();
-        timeline = new Timeline();
-        adherencePause = new PauseTransition(Duration.seconds(5));
-        adherencePause.setOnFinished(se -> {
-            System.out.println("ADHERENCE FAILED");
-        });
     }
 
 

@@ -52,14 +52,6 @@ public class PillmasterController {
 
     public void startSchedulerService() {
         medicationScheduler = new MedicationScheduler();
-        /*
-        //get the current seconds in current minute
-        int currentSeconds = LocalDateTime.now().getSecond();
-        System.out.println(currentSeconds);
-        medicationScheduler.setDelay(Duration.seconds(60 - currentSeconds));
-        System.out.println("Waiting " + (60 - currentSeconds) + " seconds");
-        medicationScheduler.setPeriod(Duration.minutes(1));
-        */
         medicationScheduler.setOnSucceeded(e -> {
             System.out.println("Scheduler completed successfully...");
         });
