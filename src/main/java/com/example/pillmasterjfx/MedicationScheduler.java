@@ -17,13 +17,12 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
-public class MedicationScheduler extends ScheduledService<Integer> {
+public class MedicationScheduler{
     public static final String JSON_PATH = "sample-meds.json";
     private static final int SECONDS_IN_DAY = 86400;
     private static final int MINUTES_IN_DAY = 1440;
     private static final int DEMO_INTERVAL_SECONDS = 72;
     private final Timeline timeline;
-    private JSONArray medArray;
     private final HashMap<String, Medication> medicationMap;
     private final PauseTransition adherencePause;
 
@@ -31,48 +30,37 @@ public class MedicationScheduler extends ScheduledService<Integer> {
     public MedicationScheduler() {
         medicationMap = new HashMap<>();
         timeline = new Timeline();
+        timeline.setCycleCount(1);
         adherencePause = new PauseTransition(Duration.seconds(5));
         adherencePause.setOnFinished(se -> {
             System.out.println("ADHERENCE FAILED");
         });
     }
 
-    @Override
-    protected Task<Integer> createTask() {
-        return new Task<>() {
-            @Override
-            protected Integer call() throws Exception {
-                //TODO change to contact server for daily update
-                JSONObject content = openJSONFile(JSON_PATH);
+    public JSONArray pullMedicationArray() throws IOException {
+        //TODO change to contact server for daily update
+        JSONObject content = openJSONFile(JSON_PATH);
 
-                if(content != null) {
-                    if(content.has("medication")) {
-                        medArray = content.getJSONArray("medication");
-                    } else {
-                        System.out.println("!!! Incorrect JSON !!!");
-                        return 0;
-                    }
-                } else {
-                    System.out.println("There was an error reading the JSON " +
-                            "file...");
-                    return 0;
-                }
-
-                populateMedicationMap(medArray);
-                timeline.setCycleCount(1);
-                checkDailyMeds();
-
-                //reschedule self to next midnight (unless demo)
-                setPeriod(timeToMidnight());
-
-                return 1;
+        if(content != null) {
+            if(content.has("medication")) {
+                return content.getJSONArray("medication");
+            } else {
+                System.out.println("!!! Incorrect JSON !!!");
+                return null;
             }
-        };
+        } else {
+            System.out.println("There was an error reading the JSON " +
+                    "file...");
+            return null;
+        }
     }
 
-    private Duration timeToMidnight() {
+    public static Duration timeToMidnight() {
         //this is only for demo timings
-        int value = getSecondsSinceMidnight() % DEMO_INTERVAL_SECONDS;
+        int mid = getSecondsSinceMidnight();
+
+        System.out.println(mid + " is the current time");
+        int value = DEMO_INTERVAL_SECONDS - (mid % DEMO_INTERVAL_SECONDS);
 
         //Debug value output
         System.out.println(value + " seconds until next interval");
@@ -80,7 +68,7 @@ public class MedicationScheduler extends ScheduledService<Integer> {
         return Duration.seconds(value);
     }
 
-    private int getSecondsSinceMidnight() {
+    private static int getSecondsSinceMidnight() {
         LocalDateTime current = LocalDateTime.now();
         return (current.getSecond()
                 + current.getMinute()*60
@@ -88,7 +76,7 @@ public class MedicationScheduler extends ScheduledService<Integer> {
         );
     }
 
-    private void checkDailyMeds() {
+    public void checkDailyMeds() {
         timeline.getKeyFrames().clear();
         medicationMap.forEach((String s, Medication m) -> {
             //check if every day
@@ -133,18 +121,18 @@ public class MedicationScheduler extends ScheduledService<Integer> {
         }
     }
 
-    private void populateMedicationMap(JSONArray content) {
-        for(var obj: content) {
-            if(obj instanceof JSONObject) {
+    public void populateMedicationMap(JSONArray content) {
+        for (var obj : content) {
+            if (obj instanceof JSONObject) {
                 JSONObject entry = (JSONObject) obj;
                 Medication medication = new Medication(
-                    entry.getString("name"),
-                    entry.getInt("count"),
-                    entry.getString("schedule"),
-                    entry.getJSONArray("days"),
-                    entry.getJSONArray("hours")
+                        entry.getString("name"),
+                        entry.getInt("count"),
+                        entry.getString("schedule"),
+                        entry.getJSONArray("days"),
+                        entry.getJSONArray("hours")
                 );
-                medicationMap.put(medication.getName(),medication);
+                medicationMap.put(medication.getName(), medication);
             }
         }
     }

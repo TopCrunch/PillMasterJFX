@@ -1,5 +1,7 @@
 package com.example.pillmasterjfx;
 
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,7 +14,6 @@ import jssc.SerialPortException;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ public class PillmasterController {
     private final HashMap<Medication, Boolean> runningMedicationMap;
     public Button newMedButton;
     MedicationScheduler medicationScheduler;
+    ScheduledService<Integer> service;
     File jsonFile;
 
     SerialController serialController;
@@ -46,23 +48,47 @@ public class PillmasterController {
         if(jsonFile.createNewFile()){
             System.out.println(jsonFile.getName() + " created!");
         }
-        startSchedulerService();
+        medicationScheduler = new MedicationScheduler();
+        initScheduler();
+        startService();
 
     }
 
-    public void startSchedulerService() {
-        medicationScheduler = new MedicationScheduler();
-        medicationScheduler.setOnSucceeded(e -> {
+    public void initScheduler() {
+        service = new ScheduledService<>() {
+            @Override
+            protected Task<Integer> createTask() {
+                return new Task<>() {
+                    @Override
+                    protected Integer call(){
+                        try {
+                            medicationScheduler.populateMedicationMap(
+                                    medicationScheduler.pullMedicationArray()
+                            );
+                            medicationScheduler.checkDailyMeds();
+                            setPeriod(MedicationScheduler.timeToMidnight());
+                        } catch (IOException e) {
+                            e.printStackTrace(System.err);
+                        }
+                        return 1;
+                    }
+                };
+            }
+        };
+    }
+
+    public void startService() {
+        service.setOnSucceeded(e -> {
             System.out.println("Scheduler completed successfully...");
         });
-        medicationScheduler.setOnFailed(e -> {
+        service.setOnFailed(e -> {
             System.err.println("Scheduler failed!");
-            medicationScheduler.getException().printStackTrace(System.err);
+            service.getException().printStackTrace(System.err);
             System.err.println("Retrying...");
-            medicationScheduler.setPeriod(Duration.seconds(5));
+            service.setPeriod(Duration.seconds(5));
         });
-        medicationScheduler.setRestartOnFailure(true);
-        medicationScheduler.start();
+        service.setRestartOnFailure(true);
+        service.start();
     }
 
     public void addMedication(Medication medication) {
