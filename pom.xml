@@ -119,6 +119,7 @@
     </dependencies>
 
     <build>
+        <finalName>pillMasterJFX-FatJar</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -163,18 +164,29 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!--
+        https://maven.apache.org/plugins/maven-shade-plugin/
+        This plugin provides the capability to package the artifact in an uber-jar, including its dependencies and
+        to shade - i.e. rename - the packages of some of the dependencies. The transformer will combine the files
+        in the META-INF.services directories of multiple Pi4J plugins with the same package name into one file.
+        -->
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.0</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.example.pillmasterjfx.PillmasterApp</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
