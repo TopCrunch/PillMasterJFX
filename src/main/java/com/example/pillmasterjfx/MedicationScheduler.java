@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -22,6 +23,7 @@ public class MedicationScheduler{
     public static final String JSON_PATH = "sample-meds.json";
     private static final int SECONDS_IN_DAY = 86400;
     private static final int MINUTES_IN_DAY = 1440;
+    public static boolean demoMode = false;
     private static final int DEMO_INTERVAL_SECONDS = 72;
     private final Timeline timeline;
     private final HashMap<String, Medication> medicationMap;
@@ -58,16 +60,28 @@ public class MedicationScheduler{
     }
 
     public static Duration timeToMidnight() {
-        //this is only for demo timings
+        Duration duration;
         int mid = getSecondsSinceMidnight();
-
         System.out.println(mid + " is the current time");
-        int value = DEMO_INTERVAL_SECONDS - (mid % DEMO_INTERVAL_SECONDS);
+        if(demoMode) {
+            //this is only for demo timings
+            duration = Duration.seconds(
+                            DEMO_INTERVAL_SECONDS
+                                    - (mid % DEMO_INTERVAL_SECONDS)
+                    );
 
+        } else {
+            LocalTime time = LocalTime.now();
+            Duration now = Duration.hours(time.getHour())
+                            .add(Duration.minutes(time.getMinute()))
+                            .add(Duration.seconds(time.getSecond()));
+            duration =  Duration.hours(24).subtract(now);
+        }
         //Debug value output
-        System.out.println(value + " seconds until next interval");
+        System.out.println(
+                duration.toSeconds() + " seconds until next interval");
 
-        return Duration.seconds(value);
+        return duration;
     }
 
     private static int getSecondsSinceMidnight() {
