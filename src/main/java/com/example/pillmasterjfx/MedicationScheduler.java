@@ -3,8 +3,6 @@ package com.example.pillmasterjfx;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.concurrent.ScheduledService;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.util.Duration;
@@ -14,7 +12,10 @@ import org.json.JSONObject;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MedicationScheduler{
@@ -38,8 +39,9 @@ public class MedicationScheduler{
     }
 
     public JSONArray pullMedicationArray() throws IOException {
-        //TODO change to contact server for daily update
-        JSONObject content = openJSONFile(JSON_PATH);
+        //TODO change to contact server for daily update DONE?
+        //JSONObject content = openJSONFile(JSON_PATH);
+        JSONObject content = requestJSONFile();
 
         if(content != null) {
             if(content.has("medication")) {
@@ -76,35 +78,49 @@ public class MedicationScheduler{
         );
     }
 
+    private static boolean hasDayToday(ArrayList<DayOfWeek> days) {
+        DayOfWeek today = LocalDate.now().getDayOfWeek();
+        for(DayOfWeek day : days) {
+            if(today.compareTo(day) == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void checkDailyMeds() {
         timeline.getKeyFrames().clear();
         medicationMap.forEach((String s, Medication m) -> {
             //check if every day
-            if(m.getCount() > 0
-                    && m.getDaysOfWeek().size() >= 7) {
-                timeline.getKeyFrames().add(new KeyFrame(
-                        Duration.seconds(30),
-                        m.getName(),
-                        (ActionEvent event) -> {
-                            String medName = m.getName();
-                            System.out.println("Alert for " + medName);
-                            Alert popup = new Alert(Alert.AlertType.CONFIRMATION);
-                            popup.setOnHidden(he -> {
-                                adherencePause.stop();
+            if(m.getCount() > 0 && hasDayToday(m.getDaysOfWeek())) {
+                for (HourMinuteCounter time : m.getTimeList()) {
+                    Duration duration = time.getDurationToTime();
+                    if (Duration.ZERO.compareTo(duration) < 0) {
+                        timeline.getKeyFrames().add(new KeyFrame(
+                                duration,
+                                m.getName(),
+                                (ActionEvent event) -> {
+                                    String medName = m.getName();
+                                    System.out.println("Alert for " + medName);
+                                    Alert popup = new Alert(Alert.AlertType.CONFIRMATION);
+                                    popup.setOnHidden(he -> {
+                                        adherencePause.stop();
 
-                                //TODO placeholder for dispensing process
-                                medicationMap.get(medName).popCount();
-                                try{
-                                    writeToJSON();
-                                } catch (IOException e) {
-                                    System.out.println("writing error");
+                                        //TODO placeholder for dispensing process
+                                        medicationMap.get(medName).popCount();
+                                        try {
+                                            writeToJSON();
+                                        } catch (IOException e) {
+                                            System.out.println("writing error");
+                                        }
+                                        //---------------------------------------
+                                    });
+                                    popup.show();
+                                    adherencePause.play();
                                 }
-                                //---------------------------------------
-                            });
-                            popup.show();
-                            adherencePause.play();
-                        }
-                ));
+                        ));
+                    }
+                }
             }
         });
         if(!timeline.getKeyFrames().isEmpty()) {
@@ -145,6 +161,21 @@ public class MedicationScheduler{
             } else {
                 return null;
             }
+    }
+
+    private JSONObject requestJSONFile() {
+        NetworkClient client = new NetworkClient();
+        try {
+            String response = client.requestMedicationFile();
+            if(response.length() > 0) {
+                return new JSONObject(response);
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
+            return null;
+        }
     }
 
     public void writeToJSON() throws IOException {

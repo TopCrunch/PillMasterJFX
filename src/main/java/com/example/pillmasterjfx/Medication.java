@@ -83,6 +83,10 @@ public class Medication {
         return value;
     }
 
+    public ArrayList<HourMinuteCounter> getTimeList() {
+        return new ArrayList<>(timeList);
+    }
+
     public ArrayList<DayOfWeek> getDaysOfWeek() {
         return new ArrayList<>(dayOfWeek);
     }

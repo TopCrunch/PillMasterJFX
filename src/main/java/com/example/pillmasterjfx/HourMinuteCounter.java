@@ -1,5 +1,8 @@
 package com.example.pillmasterjfx;
 
+import javafx.util.Duration;
+import java.time.LocalTime;
+
 public class HourMinuteCounter {
 
     private int minute;
@@ -17,6 +20,16 @@ public class HourMinuteCounter {
         } else {
             return hour;
         }
+    }
+
+    public Duration getDurationToTime() {
+        LocalTime time = LocalTime.now();
+        Duration now =
+                Duration.hours(time.getHour())
+                        .add(Duration.minutes(time.getMinute()))
+                        .add(Duration.seconds(time.getSecond()));
+        Duration duration = Duration.hours(hour).add(Duration.minutes(minute));
+        return duration.subtract(now);
     }
 
     public int getMinute() {
