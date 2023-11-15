@@ -8,6 +8,14 @@ public class HourMinuteCounter {
     private int minute;
     private int hour;
 
+    public String toString() {
+        if(isPM()) {
+            return hour + ":" + minute + "PM";
+        } else{
+            return hour + ":" + minute + "AM";
+        }
+    }
+
     public int getTrueTime() {
         return (hour*100) + minute;
     }

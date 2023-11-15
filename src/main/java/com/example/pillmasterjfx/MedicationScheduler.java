@@ -133,6 +133,14 @@ public class MedicationScheduler{
                                     adherencePause.play();
                                 }
                         ));
+                        System.out.println(
+                                m.getName()
+                                        + " Scheduled for "
+                                        + time
+                                        + " (In "
+                                        + duration.toSeconds() +
+                                        " seconds...)"
+                        );
                     }
                 }
             }
