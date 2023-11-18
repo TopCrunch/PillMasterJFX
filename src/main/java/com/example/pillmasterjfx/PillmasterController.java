@@ -1,5 +1,6 @@
 package com.example.pillmasterjfx;
 
+import javafx.animation.AnimationTimer;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -14,6 +15,8 @@ import jssc.SerialPortException;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +28,7 @@ public class PillmasterController {
     private static final String TEST_JSON_FILE = "sample-meds.json";
     private final HashMap<Medication, Boolean> runningMedicationMap;
     public Button newMedButton;
+    public Label timeLabel;
     MedicationScheduler medicationScheduler;
     ScheduledService<Integer> service;
     File jsonFile;
@@ -51,6 +55,14 @@ public class PillmasterController {
         medicationScheduler = new MedicationScheduler();
         initScheduler();
         startService();
+
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                timeLabel.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("E MM-dd-yyyy\nHH:mm:ss a")));
+            }
+        };
+        timer.start();
 
     }
 
