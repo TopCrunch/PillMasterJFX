@@ -119,9 +119,6 @@ public class PillmasterController {
     }
 
     @FXML
-    private Label valueLabel;
-
-    @FXML
     protected void onNewMedButtonClick() throws IOException {
         FXMLLoader fxmlLoader =
                 new FXMLLoader(PillmasterApp.class.getResource(
