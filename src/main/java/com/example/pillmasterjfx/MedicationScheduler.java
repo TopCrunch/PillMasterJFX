@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MedicationScheduler{
-    public static final String JSON_PATH = "sample-meds.json";
+    public static final String JSON_PATH = "PM-Local-Backup.json";
     private static final int SECONDS_IN_DAY = 86400;
     private static final int MINUTES_IN_DAY = 1440;
     public static boolean demoMode = false;
@@ -123,7 +123,7 @@ public class MedicationScheduler{
                                         //TODO placeholder for dispensing process
                                         medicationMap.get(medName).popCount();
                                         try {
-                                            writeToJSON();
+                                            uploadJSON();
                                         } catch (IOException e) {
                                             System.out.println("writing error");
                                         }
@@ -153,7 +153,7 @@ public class MedicationScheduler{
     public void addNewMedication(Medication medication) {
         medicationMap.put(medication.getName(), medication);
         try {
-            writeToJSON();
+            uploadJSON();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -200,16 +200,30 @@ public class MedicationScheduler{
         }
     }
 
-    public void writeToJSON() throws IOException {
+    public JSONObject wrapMedicationsToJSON() {
         JSONArray array = new JSONArray();
         JSONObject top = new JSONObject();
-        for(Medication value:medicationMap.values()){
+        for(Medication value:medicationMap.values()) {
             array.put(value.toJSON());
         }
         top.put("medication", array);
+        return top;
+    }
+
+    public void writeToLocalJSON() throws IOException {
         FileWriter writer = new FileWriter(JSON_PATH);
-        writer.write(top.toString());
+        writer.write(wrapMedicationsToJSON().toString());
         writer.close();
+    }
+
+    public void uploadJSON() throws IOException {
+        NetworkClient client = new NetworkClient();
+        if(client.putMedicationFile(wrapMedicationsToJSON())) {
+            System.out.println("Upload complete!");
+        } else {
+            System.out.println("Upload failed! Writing to local file...");
+            writeToLocalJSON();
+        }
     }
 
 
