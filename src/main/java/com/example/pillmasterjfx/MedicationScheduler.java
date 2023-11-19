@@ -23,6 +23,8 @@ public class MedicationScheduler{
     public static final String JSON_PATH = "PM-Local-Backup.json";
     private static final int SECONDS_IN_DAY = 86400;
     private static final int MINUTES_IN_DAY = 1440;
+
+    private int numScheduled = 0;
     public static boolean demoMode = false;
     private static final int DEMO_INTERVAL_SECONDS = 72;
     private final Timeline timeline;
@@ -102,6 +104,34 @@ public class MedicationScheduler{
         return false;
     }
 
+    public String getNextScheduled() {
+        return timeline.getKeyFrames().get(0).getName();
+    }
+
+    public int getNumScheduled() {
+        return numScheduled;
+    }
+
+    public boolean triggerNextKeyframe(){
+        if(numScheduled > 0) {
+            timeline.pause();
+            Duration playhead = timeline.getCurrentTime();
+            timeline.stop();
+            KeyFrame next = timeline.getKeyFrames().remove(0);
+            numScheduled--;
+            timeline.getKeyFrames().add(
+                    new KeyFrame(
+                            Duration.seconds(1).add(playhead),
+                            next.getName(),
+                            next.getOnFinished()
+                    ));
+            timeline.playFrom(playhead);
+        } else {
+            return false;
+        }
+        return true;
+    }
+
     public void checkDailyMeds() {
         timeline.getKeyFrames().clear();
         medicationMap.forEach((String s, Medication m) -> {
@@ -141,6 +171,7 @@ public class MedicationScheduler{
                                         + duration.toSeconds() +
                                         " seconds...)"
                         );
+                        numScheduled++;
                     }
                 }
             }

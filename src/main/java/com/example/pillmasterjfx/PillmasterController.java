@@ -29,6 +29,8 @@ public class PillmasterController {
     private final HashMap<Medication, Boolean> runningMedicationMap;
     public Button newMedButton;
     public Label timeLabel;
+    public Button skipButton;
+    public Label nextLabel;
     MedicationScheduler medicationScheduler;
     ScheduledService<Integer> service;
     File jsonFile;
@@ -92,6 +94,15 @@ public class PillmasterController {
     public void startService() {
         service.setOnSucceeded(e -> {
             System.out.println("Scheduler completed successfully...");
+            if(medicationScheduler.getNumScheduled() > 0) {
+                nextLabel.setText(
+                        "Up next: "
+                                + medicationScheduler.getNextScheduled()
+                );
+            } else {
+                nextLabel.setText("No medication scheduled today...");
+                skipButton.setDisable(true);
+            }
         });
         service.setOnFailed(e -> {
             System.err.println("Scheduler failed!");
@@ -142,6 +153,19 @@ public class PillmasterController {
         });
 
         stage.showAndWait();
+    }
+
+    @FXML
+    protected void onSkipButtonClick() {
+        if(medicationScheduler.triggerNextKeyframe()) {
+            nextLabel.setText(
+                    "Up next: "
+                    + medicationScheduler.getNextScheduled()
+            );
+        } else {
+            nextLabel.setText("No medication scheduled today...");
+            skipButton.setDisable(true);
+        }
     }
 
     @FXML
