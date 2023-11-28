@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class MedicationScheduler{
     public static final String JSON_PATH = "PM-Local-Backup.json";
@@ -42,14 +43,15 @@ public class MedicationScheduler{
         });
     }
 
-    public JSONArray pullMedicationArray() throws IOException {
-        //TODO change to contact server for daily update DONE?
-        //JSONObject content = openJSONFile(JSON_PATH);
+    public JSONObject pullMedicationArray() throws IOException {
         JSONObject content = requestJSONFile();
+        if(content == null) {
+            content = openJSONFile(JSON_PATH);
+        }
 
         if(content != null) {
             if(content.has("medication")) {
-                return content.getJSONArray("medication");
+                return (JSONObject) content.get("medication");
             } else {
                 System.out.println("!!! Incorrect JSON !!!");
                 return null;
@@ -190,14 +192,14 @@ public class MedicationScheduler{
         }
     }
 
-    public void populateMedicationMap(JSONArray content) {
-        for (var obj : content) {
-            if (obj instanceof JSONObject) {
-                JSONObject entry = (JSONObject) obj;
+    public void populateMedicationMap(JSONObject content) {
+        Iterator<String> keys = content.keys();
+        while(keys.hasNext()) {
+            String key = keys.next();
+            if (content.get(key) instanceof JSONObject entry) {
                 Medication medication = new Medication(
-                        entry.getString("name"),
+                        key,
                         entry.getInt("count"),
-                        entry.getString("schedule"),
                         entry.getJSONArray("days"),
                         entry.getJSONArray("hours")
                 );
@@ -209,12 +211,12 @@ public class MedicationScheduler{
     private JSONObject openJSONFile(String path) throws IOException {
             String stream = new String(Files.readAllBytes(Paths.get(path)));
             if(stream.length() > 0) {
-                JSONObject tmp = new JSONObject(stream);
-                return tmp;
+                return new JSONObject(stream);
             } else {
                 return null;
             }
     }
+
 
     private JSONObject requestJSONFile() {
         NetworkClient client = new NetworkClient();
@@ -232,12 +234,12 @@ public class MedicationScheduler{
     }
 
     public JSONObject wrapMedicationsToJSON() {
-        JSONArray array = new JSONArray();
+        JSONObject sub = new JSONObject();
         JSONObject top = new JSONObject();
         for(Medication value:medicationMap.values()) {
-            array.put(value.toJSON());
+            sub.put(value.getName(), value.toJSON());
         }
-        top.put("medication", array);
+        top.put("medication", sub);
         return top;
     }
 

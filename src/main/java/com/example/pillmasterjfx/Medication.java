@@ -12,35 +12,17 @@ public class Medication {
     private final String name;
     private int count;
     private ArrayList<DayOfWeek> dayOfWeek;
-    public enum Schedule {
-        DAILY,
-        TWICE(),
-        THRICE
-    }
-    private Schedule schedule;
 
-    public Medication(String name, int count,
-                      Schedule schedule, ArrayList<DayOfWeek> dayList,
+    public Medication(String name, int count, ArrayList<DayOfWeek> dayList,
                       ArrayList<HourMinuteCounter> timeList) {
         this.name = name;
         this.count = count;
-        this.schedule = schedule;
         this.dayOfWeek = new ArrayList<>(dayList);
         this.timeList = new ArrayList<>(timeList);
     }
 
-    public Medication(String name, int count, String schedule,
-                      ArrayList<DayOfWeek> dayList,
-                      ArrayList<HourMinuteCounter> timeList) {
-        this.name = name;
-        this.count = count;
-        this.schedule = Schedule.valueOf(schedule);
-        this.dayOfWeek = new ArrayList<>(dayList);
-        this.timeList = new ArrayList<>(timeList);
-    }
-
-    public Medication(String name, int count,
-                      String schedule, JSONArray dayList, JSONArray timeList) {
+    public Medication(String name, int count, JSONArray dayList,
+                      JSONArray timeList) {
         ArrayList<DayOfWeek> tmpDayList = new ArrayList<>();
         ArrayList<HourMinuteCounter> tmpTimeList = new ArrayList<>();
         for(int i = 0; i < dayList.length(); i++) {
@@ -55,14 +37,13 @@ public class Medication {
         }
         this.name = name;
         this.count = count;
-        this.schedule = Schedule.valueOf(schedule);
         this.dayOfWeek = tmpDayList;
         this.timeList = tmpTimeList;
     }
 
     @Override
     public String toString() {
-        return String.format("%s, %d, %s",name,count,schedule.toString());
+        return String.format("%s, %d", name,count);
     }
 
     public JSONObject toJSON() {
@@ -75,9 +56,7 @@ public class Medication {
         for(HourMinuteCounter h : timeList){
             hours.put(h.getTrueTime());
         }
-        value.put("name", getName());
         value.put("count", getCount());
-        value.put("schedule", getSchedule().toString());
         value.put("days", days);
         value.put("hours", hours);
         return value;
@@ -101,17 +80,5 @@ public class Medication {
 
     public void popCount() {
         count--;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public Schedule getSchedule() {
-        return schedule;
-    }
-
-    public void setSchedule(Schedule schedule) {
-        this.schedule = schedule;
     }
 }

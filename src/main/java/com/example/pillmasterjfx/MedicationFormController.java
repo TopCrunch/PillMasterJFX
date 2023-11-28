@@ -72,9 +72,9 @@ public class MedicationFormController {
 
     @FXML
     public void initialize() {
-        dailyButton.setUserData(Medication.Schedule.DAILY);
-        twiceButton.setUserData(Medication.Schedule.TWICE);
-        thriceButton.setUserData(Medication.Schedule.THRICE);
+        dailyButton.setUserData("DAILY");
+        twiceButton.setUserData("TWICE");
+        thriceButton.setUserData("THRICE");
         timeA = new HourMinuteCounter();
         timeB = new HourMinuteCounter();
         timeC = new HourMinuteCounter();
@@ -133,7 +133,7 @@ public class MedicationFormController {
         Toggle button = scheduleToggle.getSelectedToggle();
         scheduleGroup.setStyle(null);
         if(button != null) {
-            switch (button.getUserData().toString()) {
+            switch ((String)button.getUserData()) {
                 case "DAILY" -> {
                     timeGroupA.setVisible(true);
                     timeGroupB.setVisible(false);
@@ -205,9 +205,9 @@ public class MedicationFormController {
                 }
             }
 
-            Medication.Schedule schedule =
-                    (Medication.Schedule) scheduleToggle.getSelectedToggle().getUserData();
-            switch (schedule.toString()) {
+            String schedule =
+                    (String) scheduleToggle.getSelectedToggle().getUserData();
+            switch (schedule) {
                 case "THRICE":
                     tmpTime.add(0, timeC);
                 case "TWICE":
@@ -219,7 +219,6 @@ public class MedicationFormController {
             medication = new Medication(
                     medicationField.getText(),
                     Integer.parseInt(quantityField.getText()),
-                    schedule,
                     tmpDay,
                     tmpTime
             );
