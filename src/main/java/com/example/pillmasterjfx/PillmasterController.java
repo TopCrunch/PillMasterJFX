@@ -43,11 +43,14 @@ public class PillmasterController {
     @FXML
     public void initialize() throws IOException {
         System.out.println("FXML file loaded!");
+        /*
         try {
             serialController = new SerialController();
         } catch(SerialPortException e) {
             System.out.println(e.getMessage());
         }
+
+         */
 
         jsonFile = new File(TEST_JSON_FILE);
 

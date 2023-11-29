@@ -41,9 +41,6 @@
       <padding>
          <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
       </padding>
-      <right>
-         <Button fx:id="skipButton" mnemonicParsing="false" onAction="#onSkipButtonClick" prefHeight="50.0" prefWidth="50.0" text="SKIP" BorderPane.alignment="CENTER" />
-      </right>
       <top>
          <Label fx:id="nextLabel" text="No medication scheduled today..." BorderPane.alignment="CENTER">
             <font>
@@ -51,5 +48,13 @@
             </font>
          </Label>
       </top>
+      <right>
+         <VBox alignment="CENTER" spacing="5.0" BorderPane.alignment="CENTER">
+            <children>
+               <Button fx:id="debugButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDebugButtonClick" prefHeight="50.0" prefWidth="50.0" text="DBG" />
+               <Button fx:id="skipButton" mnemonicParsing="false" onAction="#onSkipButtonClick" prefHeight="50.0" prefWidth="50.0" text="SKIP" />
+            </children>
+         </VBox>
+      </right>
    </BorderPane>
 </VBox>

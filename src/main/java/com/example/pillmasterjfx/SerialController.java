@@ -9,29 +9,29 @@ public class SerialController {
     String serialPortName;
 
     public enum CONTROL_FLAG {
-        A(0x5),
-        B(0x6),
-        C(0x7),
-        D(0x8),
-        E(0x9),
-        MAIN(0x1),
-        REV(0x4),
-        ADJ(0x3),
-        BOTH(0x2),
-        OPERATE(0x5);
+        A(5),
+        B(6),
+        C(7),
+        D(8),
+        E(9),
+        MAIN(16),
+        REV(64),
+        ADJ(48),
+        BOTH(32),
+        OPERATE(80);
 
-        private final byte value;
-        public byte getValue() {
+        private final int value;
+        public int getValue() {
             return value;
         }
 
-        public static byte makeSignal(CONTROL_FLAG command,
+        public static int makeSignal(CONTROL_FLAG command,
                                    CONTROL_FLAG canister) {
-            return (byte) ((command.getValue() << 1) + canister.getValue());
+            return command.getValue() + canister.getValue();
         }
 
         CONTROL_FLAG(int value) {
-            this.value = (byte)value;
+            this.value = value;
         }
     }
 
@@ -55,9 +55,9 @@ public class SerialController {
         port.setRTS(false);
     }
 
-    public boolean writeToPort(char message) {
+    public boolean writeToPort(int message) {
         try {
-            port.writeByte((byte) message);
+            port.writeByte((byte)message);
             return true;
         } catch (SerialPortException e) {
             e.printStackTrace();

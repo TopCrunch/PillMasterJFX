@@ -37,7 +37,9 @@ public class DebugController {
 
     public void closeWindow(ActionEvent e) {
         try {
-            serialController.closePort();
+            if(serialController != null) {
+                serialController.closePort();
+            }
         } catch (SerialPortException s) {
             s.printStackTrace();
         }
@@ -49,7 +51,7 @@ public class DebugController {
         switch (((Button)e.getSource()).getId()) {
             case("aLeft"):
                 serialController.writeToPort(
-                        (char) SerialController.CONTROL_FLAG.makeSignal(
+                        SerialController.CONTROL_FLAG.makeSignal(
                                 SerialController.CONTROL_FLAG.A,
                                 SerialController.CONTROL_FLAG.REV
                                 )
@@ -57,7 +59,7 @@ public class DebugController {
                 break;
             case("aRight"):
                 serialController.writeToPort(
-                        (char) SerialController.CONTROL_FLAG.makeSignal(
+                        SerialController.CONTROL_FLAG.makeSignal(
                                 SerialController.CONTROL_FLAG.A,
                                 SerialController.CONTROL_FLAG.MAIN
                         )
@@ -65,7 +67,7 @@ public class DebugController {
                 break;
             case("bLeft"):
                 serialController.writeToPort(
-                        (char) SerialController.CONTROL_FLAG.makeSignal(
+                        SerialController.CONTROL_FLAG.makeSignal(
                                 SerialController.CONTROL_FLAG.B,
                                 SerialController.CONTROL_FLAG.REV
                         )
@@ -73,7 +75,7 @@ public class DebugController {
                 break;
             case("bRight"):
                 serialController.writeToPort(
-                        (char) SerialController.CONTROL_FLAG.makeSignal(
+                        SerialController.CONTROL_FLAG.makeSignal(
                                 SerialController.CONTROL_FLAG.B,
                                 SerialController.CONTROL_FLAG.MAIN
                         )
@@ -81,7 +83,7 @@ public class DebugController {
                 break;
             case("cLeft"):
                 serialController.writeToPort(
-                        (char) SerialController.CONTROL_FLAG.makeSignal(
+                        SerialController.CONTROL_FLAG.makeSignal(
                                 SerialController.CONTROL_FLAG.C,
                                 SerialController.CONTROL_FLAG.REV
                         )
@@ -89,7 +91,7 @@ public class DebugController {
                 break;
             case("cRight"):
                 serialController.writeToPort(
-                        (char) SerialController.CONTROL_FLAG.makeSignal(
+                        SerialController.CONTROL_FLAG.makeSignal(
                                 SerialController.CONTROL_FLAG.C,
                                 SerialController.CONTROL_FLAG.MAIN
                         )
@@ -97,7 +99,7 @@ public class DebugController {
                 break;
             case("dLeft"):
                 serialController.writeToPort(
-                        (char) SerialController.CONTROL_FLAG.makeSignal(
+                        SerialController.CONTROL_FLAG.makeSignal(
                                 SerialController.CONTROL_FLAG.D,
                                 SerialController.CONTROL_FLAG.REV
                         )
@@ -105,7 +107,7 @@ public class DebugController {
                 break;
             case("dRight"):
                 serialController.writeToPort(
-                        (char) SerialController.CONTROL_FLAG.makeSignal(
+                        SerialController.CONTROL_FLAG.makeSignal(
                                 SerialController.CONTROL_FLAG.D,
                                 SerialController.CONTROL_FLAG.MAIN
                         )
@@ -113,7 +115,7 @@ public class DebugController {
                 break;
             case("eLeft"):
                 serialController.writeToPort(
-                        (char) SerialController.CONTROL_FLAG.makeSignal(
+                        SerialController.CONTROL_FLAG.makeSignal(
                                 SerialController.CONTROL_FLAG.E,
                                 SerialController.CONTROL_FLAG.REV
                         )
@@ -121,7 +123,7 @@ public class DebugController {
                 break;
             case("eRight"):
                 serialController.writeToPort(
-                        (char) SerialController.CONTROL_FLAG.makeSignal(
+                        SerialController.CONTROL_FLAG.makeSignal(
                                 SerialController.CONTROL_FLAG.E,
                                 SerialController.CONTROL_FLAG.MAIN
                         )
