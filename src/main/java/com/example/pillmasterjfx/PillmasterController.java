@@ -156,6 +156,18 @@ public class PillmasterController {
     }
 
     @FXML
+    protected void onDebugButtonClick() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(PillmasterApp.class.getResource(
+                "debug.fxml")
+        );
+        Scene scene = new Scene(fxmlLoader.load(), 800, 400);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
+    }
+
+    @FXML
     protected void onSkipButtonClick() {
         if(medicationScheduler.triggerNextKeyframe()) {
             nextLabel.setText(
