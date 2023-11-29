@@ -3,13 +3,16 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pillmasterjfx.DebugController">
    <left>
-      <GridPane alignment="CENTER" BorderPane.alignment="CENTER">
+      <GridPane alignment="CENTER" gridLinesVisible="true" BorderPane.alignment="CENTER">
         <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
@@ -20,21 +23,51 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="aLeft" alignment="CENTER" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="LEFT" textAlignment="CENTER" />
-            <Button fx:id="aOperate" alignment="CENTER" layoutX="20.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RUN" textAlignment="CENTER" GridPane.columnIndex="1" />
-            <Button fx:id="aRight" alignment="CENTER" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RIGHT" textAlignment="CENTER" GridPane.columnIndex="2" />
-            <Button fx:id="bLeft" alignment="CENTER" layoutX="20.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="LEFT" textAlignment="CENTER" GridPane.rowIndex="1" />
-            <Button fx:id="bOperate" alignment="CENTER" layoutX="20.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RUN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button fx:id="bRight" alignment="CENTER" layoutX="20.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RIGHT" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Button fx:id="cLeft" alignment="CENTER" layoutX="220.0" layoutY="90.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="LEFT" textAlignment="CENTER" GridPane.rowIndex="2" />
-            <Button fx:id="cOperate" alignment="CENTER" layoutX="20.0" layoutY="170.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RUN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Button fx:id="cRight" alignment="CENTER" layoutX="120.0" layoutY="170.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RIGHT" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Button fx:id="dLeft" alignment="CENTER" layoutX="220.0" layoutY="170.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="LEFT" textAlignment="CENTER" GridPane.rowIndex="3" />
-            <Button fx:id="dOperate" alignment="CENTER" layoutX="20.0" layoutY="250.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RUN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Button fx:id="dRight" alignment="CENTER" layoutX="120.0" layoutY="250.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RIGHT" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <Button fx:id="eLeft" alignment="CENTER" layoutX="220.0" layoutY="250.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="LEFT" textAlignment="CENTER" GridPane.rowIndex="4" />
-            <Button fx:id="eOperate" alignment="CENTER" layoutX="20.0" layoutY="330.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RUN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <Button fx:id="eRight" alignment="CENTER" layoutX="20.0" layoutY="330.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RIGHT" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Button fx:id="aLeft" alignment="CENTER" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="CW" textAlignment="CENTER" GridPane.columnIndex="1" />
+            <Button fx:id="aRight" alignment="CENTER" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="CCW" textAlignment="CENTER" GridPane.columnIndex="2" />
+            <Button fx:id="aOperate" alignment="CENTER" layoutX="20.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RUN" textAlignment="CENTER" GridPane.columnIndex="4" />
+            <Button fx:id="bLeft" alignment="CENTER" layoutX="20.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="CW" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="bOperate" alignment="CENTER" layoutX="20.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RUN" textAlignment="CENTER" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            <Button fx:id="bRight" alignment="CENTER" layoutX="20.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="CCW" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Button fx:id="cLeft" alignment="CENTER" layoutX="220.0" layoutY="90.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="CW" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Button fx:id="cOperate" alignment="CENTER" layoutX="20.0" layoutY="170.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RUN" textAlignment="CENTER" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+            <Button fx:id="cRight" alignment="CENTER" layoutX="120.0" layoutY="170.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="CCW" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Button fx:id="dLeft" alignment="CENTER" layoutX="220.0" layoutY="170.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="CW" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Button fx:id="dOperate" alignment="CENTER" layoutX="20.0" layoutY="250.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RUN" textAlignment="CENTER" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+            <Button fx:id="dRight" alignment="CENTER" layoutX="120.0" layoutY="250.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="CCW" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Button fx:id="eLeft" alignment="CENTER" layoutX="220.0" layoutY="250.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="CW" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Button fx:id="eOperate" alignment="CENTER" layoutX="20.0" layoutY="330.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="RUN" textAlignment="CENTER" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+            <Button fx:id="eRight" alignment="CENTER" layoutX="20.0" layoutY="330.0" mnemonicParsing="false" onAction="#onOperateButtonClick" prefHeight="70.0" prefWidth="70.0" text="CCW" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Label text="A">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="52.0" layoutY="33.0" text="B" GridPane.rowIndex="1">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="52.0" layoutY="113.0" text="C" GridPane.rowIndex="2">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="52.0" layoutY="193.0" text="D" GridPane.rowIndex="3">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="52.0" layoutY="273.0" text="E" GridPane.rowIndex="4">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <ToggleButton fx:id="aAdj" mnemonicParsing="false" onAction="#onButtonToggle" prefHeight="70.0" prefWidth="70.0" text="ADJ" GridPane.columnIndex="3" />
+            <ToggleButton fx:id="bAdj" layoutX="425.0" layoutY="15.0" mnemonicParsing="false" onAction="#onButtonToggle" prefHeight="70.0" prefWidth="70.0" text="ADJ" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <ToggleButton fx:id="cAdj" layoutX="425.0" layoutY="95.0" mnemonicParsing="false" onAction="#onButtonToggle" prefHeight="70.0" prefWidth="70.0" text="ADJ" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <ToggleButton fx:id="dAdj" layoutX="425.0" layoutY="175.0" mnemonicParsing="false" onAction="#onButtonToggle" prefHeight="70.0" prefWidth="70.0" text="ADJ" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <ToggleButton fx:id="eAdj" layoutX="425.0" layoutY="255.0" mnemonicParsing="false" onAction="#onButtonToggle" prefHeight="70.0" prefWidth="70.0" text="ADJ" GridPane.columnIndex="3" GridPane.rowIndex="4" />
          </children>
       </GridPane>
    </left>

@@ -4,6 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
 import jssc.SerialPortException;
 
@@ -24,6 +26,11 @@ public class DebugController {
     public Button dRight;
     public Button eLeft;
     public Button eOperate;
+    public ToggleButton aAdj;
+    public ToggleButton bAdj;
+    public ToggleButton cAdj;
+    public ToggleButton dAdj;
+    public ToggleButton eAdj;
 
     SerialController serialController;
 
@@ -47,98 +54,128 @@ public class DebugController {
     }
 
     @FXML
+    public void onButtonToggle(ActionEvent e) {
+        if(((ToggleButton)e.getSource()).isSelected()) {
+            ((ToggleButton)e.getSource()).setStyle("-fx-background-color:red");
+        } else {
+            ((ToggleButton)e.getSource()).setStyle("");
+        }
+    }
+
+    @FXML
     public void onOperateButtonClick(ActionEvent e) {
-        switch (((Button)e.getSource()).getId()) {
-            case("aLeft"):
-                serialController.writeToPort(
-                        SerialController.CONTROL_FLAG.makeSignal(
-                                SerialController.CONTROL_FLAG.A,
-                                SerialController.CONTROL_FLAG.REV
-                                )
-                );
-                break;
-            case("aRight"):
-                serialController.writeToPort(
-                        SerialController.CONTROL_FLAG.makeSignal(
-                                SerialController.CONTROL_FLAG.A,
-                                SerialController.CONTROL_FLAG.MAIN
-                        )
-                );
-                break;
-            case("bLeft"):
-                serialController.writeToPort(
-                        SerialController.CONTROL_FLAG.makeSignal(
-                                SerialController.CONTROL_FLAG.B,
-                                SerialController.CONTROL_FLAG.REV
-                        )
-                );
-                break;
-            case("bRight"):
-                serialController.writeToPort(
-                        SerialController.CONTROL_FLAG.makeSignal(
-                                SerialController.CONTROL_FLAG.B,
-                                SerialController.CONTROL_FLAG.MAIN
-                        )
-                );
-                break;
-            case("cLeft"):
-                serialController.writeToPort(
-                        SerialController.CONTROL_FLAG.makeSignal(
-                                SerialController.CONTROL_FLAG.C,
-                                SerialController.CONTROL_FLAG.REV
-                        )
-                );
-                break;
-            case("cRight"):
-                serialController.writeToPort(
-                        SerialController.CONTROL_FLAG.makeSignal(
-                                SerialController.CONTROL_FLAG.C,
-                                SerialController.CONTROL_FLAG.MAIN
-                        )
-                );
-                break;
-            case("dLeft"):
-                serialController.writeToPort(
-                        SerialController.CONTROL_FLAG.makeSignal(
-                                SerialController.CONTROL_FLAG.D,
-                                SerialController.CONTROL_FLAG.REV
-                        )
-                );
-                break;
-            case("dRight"):
-                serialController.writeToPort(
-                        SerialController.CONTROL_FLAG.makeSignal(
-                                SerialController.CONTROL_FLAG.D,
-                                SerialController.CONTROL_FLAG.MAIN
-                        )
-                );
-                break;
-            case("eLeft"):
-                serialController.writeToPort(
-                        SerialController.CONTROL_FLAG.makeSignal(
-                                SerialController.CONTROL_FLAG.E,
-                                SerialController.CONTROL_FLAG.REV
-                        )
-                );
-                break;
-            case("eRight"):
-                serialController.writeToPort(
-                        SerialController.CONTROL_FLAG.makeSignal(
-                                SerialController.CONTROL_FLAG.E,
-                                SerialController.CONTROL_FLAG.MAIN
-                        )
-                );
-                break;
-            case("aOperate"):
-                break;
-            case("bOperate"):
-                break;
-            case("cOperate"):
-                break;
-            case("dOperate"):
-                break;
-            case("eOperate"):
-                break;
+        SerialController.CONTROL_FLAG canister = null;
+        SerialController.CONTROL_FLAG command = null;
+        switch (((Button) e.getSource()).getId()) {
+            case ("aLeft") -> {
+                canister = SerialController.CONTROL_FLAG.A;
+                if (aAdj.isSelected()) {
+                    command = SerialController.CONTROL_FLAG.BOTH;
+                } else {
+                    command = SerialController.CONTROL_FLAG.REV;
+                }
+            }
+            case ("aRight") -> {
+                canister = SerialController.CONTROL_FLAG.A;
+                if (aAdj.isSelected()) {
+                    command = SerialController.CONTROL_FLAG.ADJ;
+                } else {
+                    command = SerialController.CONTROL_FLAG.MAIN;
+                }
+            }
+            case ("bLeft") -> {
+                canister = SerialController.CONTROL_FLAG.B;
+                if (bAdj.isSelected()) {
+                    command = SerialController.CONTROL_FLAG.BOTH;
+                } else {
+                    command = SerialController.CONTROL_FLAG.REV;
+                }
+            }
+            case ("bRight") -> {
+                canister = SerialController.CONTROL_FLAG.B;
+                if (bAdj.isSelected()) {
+                    command = SerialController.CONTROL_FLAG.ADJ;
+                } else {
+                    command = SerialController.CONTROL_FLAG.MAIN;
+                }
+            }
+            case ("cLeft") -> {
+                canister = SerialController.CONTROL_FLAG.C;
+                if (cAdj.isSelected()) {
+                    command = SerialController.CONTROL_FLAG.BOTH;
+                } else {
+                    command = SerialController.CONTROL_FLAG.REV;
+                }
+            }
+            case ("cRight") -> {
+                canister = SerialController.CONTROL_FLAG.C;
+                if (cAdj.isSelected()) {
+                    command = SerialController.CONTROL_FLAG.ADJ;
+                } else {
+                    command = SerialController.CONTROL_FLAG.MAIN;
+                }
+            }
+            case ("dLeft") -> {
+                canister = SerialController.CONTROL_FLAG.D;
+                if (dAdj.isSelected()) {
+                    command = SerialController.CONTROL_FLAG.BOTH;
+                } else {
+                    command = SerialController.CONTROL_FLAG.REV;
+                }
+            }
+            case ("dRight") -> {
+                canister = SerialController.CONTROL_FLAG.D;
+                if (dAdj.isSelected()) {
+                    command = SerialController.CONTROL_FLAG.ADJ;
+                } else {
+                    command = SerialController.CONTROL_FLAG.MAIN;
+                }
+            }
+            case ("eLeft") -> {
+                canister = SerialController.CONTROL_FLAG.E;
+                if (eAdj.isSelected()) {
+                    command = SerialController.CONTROL_FLAG.BOTH;
+                } else {
+                    command = SerialController.CONTROL_FLAG.REV;
+                }
+            }
+            case ("eRight") -> {
+                canister = SerialController.CONTROL_FLAG.E;
+                if (eAdj.isSelected()) {
+                    command = SerialController.CONTROL_FLAG.ADJ;
+                } else {
+                    command = SerialController.CONTROL_FLAG.MAIN;
+                }
+            }
+            case ("aOperate") -> {
+                canister = SerialController.CONTROL_FLAG.A;
+                command = SerialController.CONTROL_FLAG.OPERATE;
+            }
+            case ("bOperate") -> {
+                command = SerialController.CONTROL_FLAG.OPERATE;
+                canister = SerialController.CONTROL_FLAG.B;
+            }
+            case ("cOperate") -> {
+                command = SerialController.CONTROL_FLAG.OPERATE;
+                canister = SerialController.CONTROL_FLAG.C;
+            }
+            case ("dOperate") -> {
+                command = SerialController.CONTROL_FLAG.OPERATE;
+                canister = SerialController.CONTROL_FLAG.D;
+            }
+            case ("eOperate") -> {
+                command = SerialController.CONTROL_FLAG.OPERATE;
+                canister = SerialController.CONTROL_FLAG.E;
+            }
+        }
+
+        if(canister != null && command != null) {
+            serialController.writeToPort(
+                    SerialController.CONTROL_FLAG.makeSignal(
+                            canister,
+                            command
+                    )
+            );
         }
     }
 }
