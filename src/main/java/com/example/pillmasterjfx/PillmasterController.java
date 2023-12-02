@@ -26,7 +26,6 @@ public class PillmasterController {
     private static final int MIDDAY_HOUR = 30;
     private static final int MORNING_HOUR = 15;
     private static final String TEST_JSON_FILE = "sample-meds.json";
-    private final HashMap<Medication, Boolean> runningMedicationMap;
     public Button newMedButton;
     public Label timeLabel;
     public Button skipButton;
@@ -36,9 +35,6 @@ public class PillmasterController {
     File jsonFile;
 
     SerialController serialController;
-    public PillmasterController() {
-        runningMedicationMap = new HashMap<>();
-    }
 
     @FXML
     public void initialize() throws IOException {
@@ -118,18 +114,7 @@ public class PillmasterController {
     }
 
     public void addMedication(Medication medication) {
-        //runningMedicationMap.put(medication, false);
-        //touchMedicationList();
         medicationScheduler.addNewMedication(medication);
-    }
-
-    public void touchMedicationList() {
-        for (Map.Entry<Medication, Boolean> entry
-                : runningMedicationMap.entrySet()){
-            if(!entry.getValue()) {
-                //startSchedulerService(entry.getKey());
-            }
-        }
     }
 
     @FXML
