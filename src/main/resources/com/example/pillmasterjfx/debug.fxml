@@ -5,15 +5,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pillmasterjfx.DebugController">
-   <left>
-      <GridPane alignment="CENTER" gridLinesVisible="true" BorderPane.alignment="CENTER">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pillmasterjfx.DebugController">
+      <GridPane fx:id="controlGrid" alignment="CENTER" disable="true" gridLinesVisible="true" BorderPane.alignment="CENTER">
         <columnConstraints>
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" />
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
@@ -68,17 +68,18 @@
             <ToggleButton fx:id="cAdj" layoutX="425.0" layoutY="95.0" mnemonicParsing="false" onAction="#onButtonToggle" prefHeight="70.0" prefWidth="70.0" text="ADJ" GridPane.columnIndex="3" GridPane.rowIndex="2" />
             <ToggleButton fx:id="dAdj" layoutX="425.0" layoutY="175.0" mnemonicParsing="false" onAction="#onButtonToggle" prefHeight="70.0" prefWidth="70.0" text="ADJ" GridPane.columnIndex="3" GridPane.rowIndex="3" />
             <ToggleButton fx:id="eAdj" layoutX="425.0" layoutY="255.0" mnemonicParsing="false" onAction="#onButtonToggle" prefHeight="70.0" prefWidth="70.0" text="ADJ" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <Button fx:id="weightButton" alignment="CENTER" mnemonicParsing="false" onAction="#checkWeight" prefHeight="70.0" prefWidth="70.0" text="WEIGHT" textAlignment="CENTER" GridPane.columnIndex="5" />
          </children>
       </GridPane>
-   </left>
-   <right>
       <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="closeButton" alignment="CENTER" mnemonicParsing="false" onAction="#closeWindow" prefHeight="70.0" prefWidth="70.0" text="EXIT" textAlignment="CENTER" />
+         <Button fx:id="closeButton" alignment="CENTER" layoutX="25.0" layoutY="330.0" mnemonicParsing="false" onAction="#closeWindow" prefHeight="70.0" prefWidth="70.0" text="EXIT" textAlignment="CENTER" />
          </children>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </BorderPane.margin>
+      <HBox.margin>
+         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+      </HBox.margin>
       </VBox>
-   </right>
-</BorderPane>
+</HBox>

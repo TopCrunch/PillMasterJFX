@@ -8,17 +8,21 @@ public class SerialController {
     SerialPort port;
     String serialPortName;
 
+    boolean isRunning = false;
+
     public enum CONTROL_FLAG {
         A(5),
         B(6),
         C(7),
         D(8),
         E(9),
+        ALT(4),
         MAIN(16),
         REV(64),
         ADJ(48),
         BOTH(32),
-        OPERATE(80);
+        OPERATE(80),
+        WEIGHT(64);
 
         private final int value;
         public int getValue() {
@@ -62,6 +66,24 @@ public class SerialController {
         } catch (SerialPortException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public SerialPort getPort() {
+        return port;
+    }
+
+    public boolean operate(CONTROL_FLAG canister) {
+        if(isRunning) {
+            return false;
+        } else {
+            writeToPort(CONTROL_FLAG.makeSignal(CONTROL_FLAG.OPERATE, canister));
+            isRunning = true;
+            return true;
         }
     }
 
