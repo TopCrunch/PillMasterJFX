@@ -1,6 +1,5 @@
 package com.example.pillmasterjfx;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -8,13 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import jssc.SerialPort;
-import jssc.SerialPortEvent;
-import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class DebugController {
 
@@ -41,17 +34,18 @@ public class DebugController {
     public Button closeButton;
     public Button weightButton;
     public GridPane controlGrid;
+    ArduinoController arduino;
 
-    SerialController serialController;
+    public DebugController() {
+    }
 
     public void initialize() {
+    }
+
+    public void addArduino(ArduinoController arduino){
+        this.arduino = arduino;
         try {
-            serialController = new SerialController();
-        } catch (SerialPortException e) {
-            e.printStackTrace();
-        }
-        try {
-            listen();
+            arduino.listen(this::processSerial);
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
@@ -66,39 +60,9 @@ public class DebugController {
         }
     }
 
-    public void listen() throws SerialPortException {
-        serialController.getPort().addEventListener(new SerialPortEventListener() {
-            StringBuilder message = new StringBuilder();
-            @Override
-            public void serialEvent(SerialPortEvent event) {
-                if(event.isRXCHAR() && event.getEventValue() > 0){
-                    try {
-                        byte[] buffer = event.getPort().readBytes();
-                        for (byte b: buffer) {
-                            if ( (b == '\r' || b == '\n') && message.length() > 0) {
-                                String toProcess = message.toString();
-                                Platform.runLater(
-                                        () -> processSerial(toProcess)
-                                );
-                                message.setLength(0);
-                            }
-                            else {
-                                message.append((char)b);
-                            }
-                        }
-                    }
-                    catch (SerialPortException ex) {
-                        System.out.println(ex);
-                        System.out.println("serialEvent");
-                    }
-                }
-            }
-        });
-    }
-
     @FXML
     public void checkWeight() {
-        serialController.writeToPort(
+        arduino.write(
                 SerialController.CONTROL_FLAG.makeSignal(
                         SerialController.CONTROL_FLAG.ALT,
                         SerialController.CONTROL_FLAG.WEIGHT
@@ -106,14 +70,8 @@ public class DebugController {
         );
     }
 
-    public void closeWindow(ActionEvent e) {
-        try {
-            if(serialController != null) {
-                serialController.closePort();
-            }
-        } catch (SerialPortException s) {
-            s.printStackTrace();
-        }
+    public void closeWindow(ActionEvent e) throws SerialPortException {
+        arduino.clearListener();
         ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
     }
 
@@ -235,7 +193,7 @@ public class DebugController {
         }
 
         if(canister != null && command != null) {
-            serialController.writeToPort(
+            arduino.write(
                     SerialController.CONTROL_FLAG.makeSignal(
                             canister,
                             command

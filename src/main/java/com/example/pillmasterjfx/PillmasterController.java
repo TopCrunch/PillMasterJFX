@@ -34,19 +34,12 @@ public class PillmasterController {
     ScheduledService<Integer> service;
     File jsonFile;
 
-    SerialController serialController;
+    ArduinoController arduino;
 
     @FXML
-    public void initialize() throws IOException {
+    public void initialize() throws IOException, SerialPortException {
         System.out.println("FXML file loaded!");
-        /*
-        try {
-            serialController = new SerialController();
-        } catch(SerialPortException e) {
-            System.out.println(e.getMessage());
-        }
-
-         */
+        arduino = new ArduinoController();
 
         jsonFile = new File(TEST_JSON_FILE);
 
@@ -149,6 +142,7 @@ public class PillmasterController {
                 "debug.fxml")
         );
         Scene scene = new Scene(fxmlLoader.load(), 800, 400);
+        ((DebugController)fxmlLoader.getController()).addArduino(arduino);
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -165,18 +159,6 @@ public class PillmasterController {
         } else {
             nextLabel.setText("No medication scheduled today...");
             skipButton.setDisable(true);
-        }
-    }
-
-    @FXML
-    protected void onTestButtonClick() throws SerialPortException {
-        // TODO: 10/21/2023 move serial usage to Dispenser.java
-        //serialController.writeToPort('b');
-        Dispenser dispenser = new Dispenser();
-        try {
-            dispenser.testMethod();
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
         }
     }
 }
