@@ -11,6 +11,8 @@ public class Medication {
     private ArrayList<HourMinuteCounter> timeList;
     private final String name;
     private int count;
+
+    private int canisterNumber = -1;
     private ArrayList<DayOfWeek> dayOfWeek;
 
     public Medication(String name, int count, ArrayList<DayOfWeek> dayList,
@@ -68,6 +70,14 @@ public class Medication {
 
     public ArrayList<DayOfWeek> getDaysOfWeek() {
         return new ArrayList<>(dayOfWeek);
+    }
+
+    public void setCanisterNumber(int i) {
+        canisterNumber = i;
+    }
+
+    public int getCanisterNumber() {
+        return canisterNumber;
     }
 
     public String getName() {
