@@ -109,7 +109,16 @@ public class PillmasterController {
     }
 
     public void addMedication(Medication medication) {
-        medicationScheduler.addNewMedication(medication);
+        int canister = medicationScheduler.checkoutCanister();
+        if(canister >= 0) {
+            medication.setCanisterNumber(canister);
+            System.out.println(canister + " added");
+            System.out.println(medication.getName() + ": add to can " + canister);
+            medicationScheduler.addNewMedication(medication);
+        } else {
+            System.out.println("Canisters full!");
+            newMedButton.setDisable(true);
+        }
     }
 
     @FXML
@@ -128,7 +137,6 @@ public class PillmasterController {
         stage.setOnHidden(we -> {
             Medication tmp = controller.getMedication();
             if(tmp != null) {
-                System.out.println(tmp + " added");
                 addMedication(tmp);
             } else {
                 System.out.println("Entry canceled -> NullData");

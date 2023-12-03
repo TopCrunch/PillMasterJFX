@@ -16,7 +16,7 @@ public class DispenserViewController {
     private Medication medication;
     private ArduinoController arduino;
     Timeline countdownTimer;
-    Object block = new Object();
+    final Object block = new Object();
 
     private boolean failed = false;
     private boolean ready = false;
@@ -123,11 +123,30 @@ public class DispenserViewController {
     }
 
     private void dispense() {
-        //TODO replace this hardcoded command to dependent on triggered med
-        arduino.write(SerialController.CONTROL_FLAG.makeSignal(
-                SerialController.CONTROL_FLAG.OPERATE,
-                SerialController.CONTROL_FLAG.A
-        ));
+        switch (medication.getCanisterNumber()) {
+            case 0 -> arduino.write(SerialController.CONTROL_FLAG.makeSignal(
+                    SerialController.CONTROL_FLAG.OPERATE,
+                    SerialController.CONTROL_FLAG.A
+            ));
+            case 1 -> arduino.write(SerialController.CONTROL_FLAG.makeSignal(
+                    SerialController.CONTROL_FLAG.OPERATE,
+                    SerialController.CONTROL_FLAG.B
+            ));
+            case 2 -> arduino.write(SerialController.CONTROL_FLAG.makeSignal(
+                    SerialController.CONTROL_FLAG.OPERATE,
+                    SerialController.CONTROL_FLAG.C
+            ));
+            case 3 -> arduino.write(SerialController.CONTROL_FLAG.makeSignal(
+                    SerialController.CONTROL_FLAG.OPERATE,
+                    SerialController.CONTROL_FLAG.D
+            ));
+            case 4 -> arduino.write(SerialController.CONTROL_FLAG.makeSignal(
+                    SerialController.CONTROL_FLAG.OPERATE,
+                    SerialController.CONTROL_FLAG.E
+            ));
+            default ->
+                    throw new IllegalStateException("Unexpected value: " + medication.getCanisterNumber());
+        }
     }
 
     public void waitForArduino() {

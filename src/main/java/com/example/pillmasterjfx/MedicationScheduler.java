@@ -1,18 +1,14 @@
 package com.example.pillmasterjfx;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import jssc.SerialPortException;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -28,6 +24,7 @@ import java.util.Iterator;
 
 public class MedicationScheduler{
     public static final String JSON_PATH = "PM-Local-Backup.json";
+    public static final int NUMBER_OF_CANISTERS = 5;
     private static final int SECONDS_IN_DAY = 86400;
     private static final int MINUTES_IN_DAY = 1440;
 
@@ -35,11 +32,11 @@ public class MedicationScheduler{
     public static boolean demoMode = false;
     private static final int DEMO_INTERVAL_SECONDS = 72;
     private final Timeline timeline;
-    private final HashMap<String, Medication> medicationMap;
+    private final Medication[] medicationArray;
 
 
     public MedicationScheduler() {
-        medicationMap = new HashMap<>();
+        medicationArray = new Medication[NUMBER_OF_CANISTERS];
         timeline = new Timeline();
         timeline.setCycleCount(1);
     }
@@ -137,11 +134,16 @@ public class MedicationScheduler{
 
     public void checkDailyMeds() {
         timeline.getKeyFrames().clear();
-        medicationMap.forEach((String s, Medication m) -> {
+        for(int i = 0; i < medicationArray.length; i++) {
+            if(medicationArray[i] == null) {
+                continue;
+            }
+            Medication m = medicationArray[i];
             if(m.getCount() > 0 && hasDayToday(m.getDaysOfWeek())) {
                 for (HourMinuteCounter time : m.getTimeList()) {
                     Duration duration = time.getDurationToTime();
                     if (Duration.ZERO.compareTo(duration) < 0) {
+                        int finalIndex = i;
                         timeline.getKeyFrames().add(new KeyFrame(
                                 duration,
                                 m.getName(),
@@ -167,7 +169,7 @@ public class MedicationScheduler{
                                                 throw new RuntimeException(e);
                                             }
                                             if(!controller.failed()) {
-                                                medicationMap.get(m.getName()).popCount();
+                                                medicationArray[finalIndex].popCount();
                                             } else {
                                                 uploadFailure(m.getName());
                                             }
@@ -195,7 +197,7 @@ public class MedicationScheduler{
                     }
                 }
             }
-        });
+        }
         if(!timeline.getKeyFrames().isEmpty()) {
             timeline.playFromStart();
         }
@@ -209,8 +211,17 @@ public class MedicationScheduler{
         }
     }
 
+    public int checkoutCanister() {
+        for(int i = 0; i < medicationArray.length; i++) {
+            if(medicationArray[i] == null) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void addNewMedication(Medication medication) {
-        medicationMap.put(medication.getName(), medication);
+        medicationArray[medication.getCanisterNumber()] = medication;
         try {
             uploadJSON();
         } catch (IOException e) {
@@ -229,7 +240,8 @@ public class MedicationScheduler{
                         entry.getJSONArray("days"),
                         entry.getJSONArray("hours")
                 );
-                medicationMap.put(medication.getName(), medication);
+                medication.setCanisterNumber(entry.getInt("canister"));
+                medicationArray[medication.getCanisterNumber()] = medication;
             }
         }
     }
@@ -261,8 +273,10 @@ public class MedicationScheduler{
 
     public JSONObject wrapMedicationsToJSON() {
         JSONObject sub = new JSONObject();
-        for(Medication value:medicationMap.values()) {
-            sub.put(value.getName(), value.toJSON());
+        for(Medication value: medicationArray) {
+            if(value != null) {
+                sub.put(value.getName(), value.toJSON());
+            }
         }
         return sub;
     }
@@ -270,8 +284,10 @@ public class MedicationScheduler{
     public JSONObject wrapMedicationsToFullJSON() {
         JSONObject sub = new JSONObject();
         JSONObject top = new JSONObject();
-        for(Medication value:medicationMap.values()) {
-            sub.put(value.getName(), value.toJSON());
+        for(Medication value: medicationArray) {
+            if(value != null) {
+                sub.put(value.getName(), value.toJSON());
+            }
         }
         top.put("medication", sub);
         return top;
