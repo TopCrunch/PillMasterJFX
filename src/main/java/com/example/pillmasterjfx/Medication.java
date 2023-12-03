@@ -45,7 +45,7 @@ public class Medication {
 
     @Override
     public String toString() {
-        return String.format("%s, %d", name,count);
+        return String.format("%s, %d, can %d", name,count,canisterNumber);
     }
 
     public JSONObject toJSON() {
@@ -61,6 +61,7 @@ public class Medication {
         value.put("count", getCount());
         value.put("days", days);
         value.put("hours", hours);
+        value.put("canister", canisterNumber);
         return value;
     }
 
