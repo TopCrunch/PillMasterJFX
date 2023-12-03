@@ -169,7 +169,7 @@ public class MedicationScheduler{
                                             if(!controller.failed()) {
                                                 medicationMap.get(m.getName()).popCount();
                                             } else {
-                                                medicationMap.get(m.getName()).incFailedCount();
+                                                uploadFailure(m.getName());
                                             }
                                             try {
                                                 uploadJSON();
@@ -198,6 +198,14 @@ public class MedicationScheduler{
         });
         if(!timeline.getKeyFrames().isEmpty()) {
             timeline.playFromStart();
+        }
+    }
+
+    private void uploadFailure(String name) {
+        LocalDateTime now = LocalDateTime.now();
+        NetworkClient client = new NetworkClient();
+        if(client.postMedicationFail(name, now)) {
+
         }
     }
 
@@ -253,6 +261,14 @@ public class MedicationScheduler{
 
     public JSONObject wrapMedicationsToJSON() {
         JSONObject sub = new JSONObject();
+        for(Medication value:medicationMap.values()) {
+            sub.put(value.getName(), value.toJSON());
+        }
+        return sub;
+    }
+
+    public JSONObject wrapMedicationsToFullJSON() {
+        JSONObject sub = new JSONObject();
         JSONObject top = new JSONObject();
         for(Medication value:medicationMap.values()) {
             sub.put(value.getName(), value.toJSON());
@@ -263,7 +279,7 @@ public class MedicationScheduler{
 
     public void writeToLocalJSON() throws IOException {
         FileWriter writer = new FileWriter(JSON_PATH);
-        writer.write(wrapMedicationsToJSON().toString());
+        writer.write(wrapMedicationsToFullJSON().toString());
         writer.close();
     }
 
