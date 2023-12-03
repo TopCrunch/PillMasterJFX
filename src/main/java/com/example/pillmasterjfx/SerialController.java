@@ -11,18 +11,9 @@ public class SerialController {
     boolean isRunning = false;
 
     public enum CONTROL_FLAG {
-        A(5),
-        B(6),
-        C(7),
-        D(8),
-        E(9),
-        ALT(4),
-        MAIN(16),
-        REV(64),
-        ADJ(48),
-        BOTH(32),
-        OPERATE(80),
-        WEIGHT(64);
+        A(5), B(6), C(7), D(8), E(9), ALT(4),
+        MAIN(16), REV(64), ADJ(48), BOTH(32), OPERATE(80),
+        WEIGHT(64), READY(48);
 
         private final int value;
         public int getValue() {

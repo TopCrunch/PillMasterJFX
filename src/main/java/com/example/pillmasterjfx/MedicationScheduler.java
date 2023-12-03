@@ -4,8 +4,14 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import jssc.SerialPortException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -30,17 +36,12 @@ public class MedicationScheduler{
     private static final int DEMO_INTERVAL_SECONDS = 72;
     private final Timeline timeline;
     private final HashMap<String, Medication> medicationMap;
-    private final PauseTransition adherencePause;
 
 
     public MedicationScheduler() {
         medicationMap = new HashMap<>();
         timeline = new Timeline();
         timeline.setCycleCount(1);
-        adherencePause = new PauseTransition(Duration.seconds(5));
-        adherencePause.setOnFinished(se -> {
-            System.out.println("ADHERENCE FAILED");
-        });
     }
 
     public JSONObject pullMedicationArray() throws IOException {
@@ -137,7 +138,6 @@ public class MedicationScheduler{
     public void checkDailyMeds() {
         timeline.getKeyFrames().clear();
         medicationMap.forEach((String s, Medication m) -> {
-            //check if every day
             if(m.getCount() > 0 && hasDayToday(m.getDaysOfWeek())) {
                 for (HourMinuteCounter time : m.getTimeList()) {
                     Duration duration = time.getDurationToTime();
@@ -146,23 +146,41 @@ public class MedicationScheduler{
                                 duration,
                                 m.getName(),
                                 (ActionEvent event) -> {
-                                    String medName = m.getName();
-                                    System.out.println("Alert for " + medName);
-                                    Alert popup = new Alert(Alert.AlertType.CONFIRMATION);
-                                    popup.setOnHidden(he -> {
-                                        adherencePause.stop();
-
-                                        //TODO placeholder for dispensing process
-                                        medicationMap.get(medName).popCount();
-                                        try {
-                                            uploadJSON();
-                                        } catch (IOException e) {
-                                            System.out.println("writing error");
-                                        }
-                                        //---------------------------------------
-                                    });
-                                    popup.show();
-                                    adherencePause.play();
+                                    try {
+                                        FXMLLoader fxmlLoader = new FXMLLoader(PillmasterApp.class.getResource(
+                                                "dispenser-view.fxml")
+                                        );
+                                        Scene scene = new Scene(fxmlLoader.load(), 800, 400);
+                                        DispenserViewController controller = fxmlLoader.getController();
+                                        controller.bindArduino(PillmasterController.getArduinoController());
+                                        controller.bindMedication(m);
+                                        Stage popup = new Stage();
+                                        popup.setScene(scene);
+                                        popup.initModality(Modality.APPLICATION_MODAL);
+                                        popup.setOnShown(se -> {
+                                            controller.startCountdown();
+                                        });
+                                        popup.setOnHidden(he -> {
+                                            try {
+                                                controller.clearListener();
+                                            } catch (SerialPortException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                            if(!controller.failed()) {
+                                                medicationMap.get(m.getName()).popCount();
+                                            } else {
+                                                medicationMap.get(m.getName()).incFailedCount();
+                                            }
+                                            try {
+                                                uploadJSON();
+                                            } catch (IOException e) {
+                                                System.out.println("writing error");
+                                            }
+                                        });
+                                        popup.show();
+                                    }catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                         ));
                         System.out.println(

@@ -13,6 +13,8 @@ public class Medication {
     private int count;
     private ArrayList<DayOfWeek> dayOfWeek;
 
+    private int failedCount;
+
     public Medication(String name, int count, ArrayList<DayOfWeek> dayList,
                       ArrayList<HourMinuteCounter> timeList) {
         this.name = name;
@@ -60,6 +62,10 @@ public class Medication {
         value.put("days", days);
         value.put("hours", hours);
         return value;
+    }
+
+    public void incFailedCount() {
+        failedCount++;
     }
 
     public ArrayList<HourMinuteCounter> getTimeList() {

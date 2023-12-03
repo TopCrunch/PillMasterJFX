@@ -42,7 +42,7 @@ public class DebugController {
     public void initialize() {
     }
 
-    public void addArduino(ArduinoController arduino){
+    public void bindArduino(ArduinoController arduino){
         this.arduino = arduino;
         try {
             arduino.listen(this::processSerial);
@@ -177,18 +177,22 @@ public class DebugController {
             case ("bOperate") -> {
                 command = SerialController.CONTROL_FLAG.OPERATE;
                 canister = SerialController.CONTROL_FLAG.B;
+                weightButton.setDisable(true);
             }
             case ("cOperate") -> {
                 command = SerialController.CONTROL_FLAG.OPERATE;
                 canister = SerialController.CONTROL_FLAG.C;
+                weightButton.setDisable(true);
             }
             case ("dOperate") -> {
                 command = SerialController.CONTROL_FLAG.OPERATE;
                 canister = SerialController.CONTROL_FLAG.D;
+                weightButton.setDisable(true);
             }
             case ("eOperate") -> {
                 command = SerialController.CONTROL_FLAG.OPERATE;
                 canister = SerialController.CONTROL_FLAG.E;
+                weightButton.setDisable(true);
             }
         }
 

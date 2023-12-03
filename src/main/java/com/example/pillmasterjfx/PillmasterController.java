@@ -17,8 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PillmasterController {
     private static final int HOURS_IN_DAY = 60;
@@ -34,7 +32,11 @@ public class PillmasterController {
     ScheduledService<Integer> service;
     File jsonFile;
 
-    ArduinoController arduino;
+    public static ArduinoController getArduinoController() {
+        return arduino;
+    }
+
+    static ArduinoController arduino;
 
     @FXML
     public void initialize() throws IOException, SerialPortException {
@@ -142,7 +144,7 @@ public class PillmasterController {
                 "debug.fxml")
         );
         Scene scene = new Scene(fxmlLoader.load(), 800, 400);
-        ((DebugController)fxmlLoader.getController()).addArduino(arduino);
+        ((DebugController)fxmlLoader.getController()).bindArduino(arduino);
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
