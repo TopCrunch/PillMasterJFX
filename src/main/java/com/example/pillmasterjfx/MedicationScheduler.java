@@ -154,7 +154,7 @@ public class MedicationScheduler{
                         int finalIndex = i;
                         timeline.getKeyFrames().add(new KeyFrame(
                                 duration,
-                                m.getName(),
+                                m.getName() + " at " + time,
                                 (ActionEvent event) -> {
                                     try {
                                         FXMLLoader fxmlLoader = new FXMLLoader(PillmasterApp.class.getResource(

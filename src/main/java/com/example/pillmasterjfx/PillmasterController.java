@@ -55,7 +55,7 @@ public class PillmasterController {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                timeLabel.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("E MM-dd-yyyy\nHH:mm:ss a")));
+                timeLabel.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("E MM-dd-yyyy\nhh:mm:ss a")));
             }
         };
         timer.start();

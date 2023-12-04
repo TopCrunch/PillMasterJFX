@@ -10,9 +10,17 @@ public class HourMinuteCounter {
 
     public String toString() {
         if(isPM()) {
-            return hour + ":" + minute + "PM";
-        } else{
-            return hour + ":" + minute + "AM";
+            if(hour == 12) {
+                return 12 + ":" + String.format("%02d", minute) + "PM";
+            } else {
+                return (hour - 12) + ":" + String.format("%02d", minute) + "PM";
+            }
+        } else {
+            if (hour == 24) {
+                return 12 + ":" + String.format("%02d", minute) + "AM";
+            } else {
+                return hour + ":" + String.format("%02d", minute) + "AM";
+            }
         }
     }
 

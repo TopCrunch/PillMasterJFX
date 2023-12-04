@@ -49,12 +49,17 @@
          </Label>
       </top>
       <right>
-         <VBox alignment="CENTER" spacing="5.0" BorderPane.alignment="CENTER">
+         <HBox alignment="CENTER" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-               <Button fx:id="debugButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDebugButtonClick" prefHeight="50.0" prefWidth="50.0" text="DBG" />
                <Button fx:id="skipButton" mnemonicParsing="false" onAction="#onSkipButtonClick" prefHeight="50.0" prefWidth="50.0" text="SKIP" />
             </children>
-         </VBox>
+         </HBox>
       </right>
+      <opaqueInsets>
+         <Insets />
+      </opaqueInsets>
+      <left>
+         <Button fx:id="debugButton" mnemonicParsing="false" onAction="#onDebugButtonClick" prefHeight="50.0" prefWidth="50.0" text="DBG" BorderPane.alignment="CENTER" />
+      </left>
    </BorderPane>
 </VBox>
