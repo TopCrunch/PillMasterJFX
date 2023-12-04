@@ -46,6 +46,11 @@ public class DebugController {
         this.arduino = arduino;
         try {
             arduino.listen(this::processSerial);
+            //write asking for ready
+            arduino.write(SerialController.CONTROL_FLAG.makeSignal(
+                    SerialController.CONTROL_FLAG.ALT,
+                    SerialController.CONTROL_FLAG.READY
+            ));
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
@@ -55,7 +60,8 @@ public class DebugController {
         String processed = toProcess.replaceAll("([\\r\\n])", "");
         switch (processed) {
             case "Done" -> weightButton.setDisable(false);
-            case "D" -> controlGrid.setDisable(false);
+            case "R" -> controlGrid.setDisable(false);
+            case "T" -> System.out.println("TARE TIMEOUT, CHECK WIRING");
             default -> System.out.println(processed);
         }
     }
