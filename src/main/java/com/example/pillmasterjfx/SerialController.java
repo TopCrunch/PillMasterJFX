@@ -41,7 +41,7 @@ public class SerialController {
         if(osName.contains("windows")) {
             serialPortName = "COM4";
         } else if(osName.contains("linux")) {
-            serialPortName = "/dev/ttyACM1";
+            serialPortName = "/dev/ttyACM0";
         }
         port = new SerialPort(serialPortName);
         port.openPort();
