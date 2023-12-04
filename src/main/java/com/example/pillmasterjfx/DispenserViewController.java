@@ -5,8 +5,10 @@ import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import jssc.SerialPortException;
 
@@ -35,6 +37,7 @@ public class DispenserViewController {
                 new KeyFrame(Duration.seconds(10), e-> {
                     failed = true;
                     System.out.println("Countdown over. FAILED");
+                    ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
                 }, new KeyValue(countdownBar.progressProperty(), 0))
         );
         countdownTimer.setCycleCount(1);

@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import jssc.SerialPortException;
 
@@ -127,9 +128,10 @@ public class PillmasterController {
                 new FXMLLoader(PillmasterApp.class.getResource(
                         "medication-form.fxml")
                 );
-        Scene scene = new Scene(fxmlLoader.load(), 600, 300);
+        Scene scene = new Scene(fxmlLoader.load(), 800, 400);
         Stage stage = new Stage();
         stage.setTitle("Pillmaster-Demo");
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
 
@@ -157,6 +159,7 @@ public class PillmasterController {
         ((DebugController)fxmlLoader.getController()).bindArduino(arduino);
         Stage stage = new Stage();
         stage.setScene(scene);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();
     }

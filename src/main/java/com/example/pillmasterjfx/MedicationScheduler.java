@@ -46,7 +46,9 @@ public class MedicationScheduler{
     public static String[] getMedicationData() {
         String[] ary = new String[5];
         for(int i = 0; i < 5; i++) {
-            ary[i] = medicationArray[i].toString();
+            if(medicationArray[i] != null) {
+                ary[i] = medicationArray[i].toString();
+            }
         }
         return ary;
     }
