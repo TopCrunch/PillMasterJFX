@@ -10,6 +10,10 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import jssc.SerialPortException;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
+
 public class DebugController {
 
     public Button eRight;
@@ -41,11 +45,19 @@ public class DebugController {
     public Label labelD;
     public Label labelE;
     ArduinoController arduino;
+    AudioPlayer player;
 
     public DebugController() {
     }
 
     public void initialize() {
+
+        try {
+            player = new AudioPlayer();
+        } catch (IOException | UnsupportedAudioFileException |
+                 LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
         populateLabels();
     }
 
@@ -75,6 +87,12 @@ public class DebugController {
 
     @FXML
     public void checkWeight() {
+        try {
+            player.play();
+        } catch (UnsupportedAudioFileException | LineUnavailableException |
+                 IOException e) {
+            throw new RuntimeException(e);
+        }
         arduino.write(
                 SerialController.CONTROL_FLAG.makeSignal(
                         SerialController.CONTROL_FLAG.ALT,

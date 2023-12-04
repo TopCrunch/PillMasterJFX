@@ -14,6 +14,8 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import jssc.SerialPortException;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;

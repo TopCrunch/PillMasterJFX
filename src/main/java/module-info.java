@@ -20,6 +20,8 @@ module com.example.pillmasterjfx {
     requires org.apache.httpcomponents.httpclient;
     requires org.json;
     requires java.mail;
+    requires audiocue;
+    requires java.desktop;
 
     exports com.example.pillmasterjfx;
 }
