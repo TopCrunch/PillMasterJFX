@@ -19,6 +19,9 @@ module com.example.pillmasterjfx {
     requires jssc;
     requires org.apache.httpcomponents.httpclient;
     requires org.json;
+    requires java.mail;
+    requires firebase.admin;
+    requires com.google.auth;
 
     exports com.example.pillmasterjfx;
 }
