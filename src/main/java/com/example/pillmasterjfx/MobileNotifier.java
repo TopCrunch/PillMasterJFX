@@ -1,11 +1,5 @@
 package com.example.pillmasterjfx;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-//import com.google.firebase.messaging.Message;
-
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -14,35 +8,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.Message;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Properties;
 
 public class MobileNotifier {
 
     private static final String PATH = "accessToken.txt";
-    public void alert(Medication medication) throws FirebaseMessagingException {
-        // This registration token comes from the client FCM SDKs.
-        String registrationToken = "YOUR_REGISTRATION_TOKEN";
-
-        // See documentation on defining a message payload.
-        com.google.firebase.messaging.Message message =
-                com.google.firebase.messaging.Message.builder()
-                .putData("ALERT", medication.toString())
-                .setToken(registrationToken)
-                .build();
-
-        // Send a message to the device corresponding to the provided
-        // registration token.
-        String response = FirebaseMessaging.getInstance().send(message);
-        // Response is a message ID string.
-        System.out.println("Successfully sent message: " + response);
-    }
-
-    public String getToken() {
-        return "";
-    }
 
     public void sendEmail() {
         ArrayList<String> values;
@@ -96,26 +67,5 @@ public class MobileNotifier {
             }
         }
         return values;
-    }
-
-    public void authenticate() throws IOException {
-        /*
-        FileInputStream serviceAccount;
-        try {
-            serviceAccount = new FileInputStream("path/to/serviceAccountKey.json");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-         */
-        /*
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.getApplicationDefault())
-                .setDatabaseUrl("https://pillmaster-9e7a7-default-rtdb.firebaseio.com/")
-                .build();
-
-        FirebaseApp.initializeApp(options);
-
-         */
     }
 }
