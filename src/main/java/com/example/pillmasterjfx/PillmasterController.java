@@ -138,6 +138,8 @@ public class PillmasterController {
             Medication tmp = controller.getMedication();
             if(tmp != null) {
                 addMedication(tmp);
+                initScheduler();
+                startService();
             } else {
                 System.out.println("Entry canceled -> NullData");
             }

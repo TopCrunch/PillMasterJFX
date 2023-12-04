@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -238,8 +239,10 @@ public class MedicationScheduler{
     }
 
     public void populateMedicationMap(JSONObject content) {
+        Arrays.fill(medicationArray, null);
         Iterator<String> keys = content.keys();
-        while(keys.hasNext()) {
+        int i = 0;
+        while(keys.hasNext() && i < medicationArray.length) {
             String key = keys.next();
             if (content.get(key) instanceof JSONObject entry) {
                 Medication medication = new Medication(
@@ -251,6 +254,7 @@ public class MedicationScheduler{
                 medication.setCanisterNumber(entry.getInt("canister"));
                 medicationArray[medication.getCanisterNumber()] = medication;
             }
+            i++;
         }
     }
 
