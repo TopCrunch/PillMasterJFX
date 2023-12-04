@@ -19,6 +19,7 @@ module com.example.pillmasterjfx {
     requires jssc;
     requires org.apache.httpcomponents.httpclient;
     requires org.json;
+    requires java.mail;
 
     exports com.example.pillmasterjfx;
 }
