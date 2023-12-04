@@ -32,13 +32,21 @@ public class MedicationScheduler{
     public static boolean demoMode = false;
     private static final int DEMO_INTERVAL_SECONDS = 72;
     private final Timeline timeline;
-    private final Medication[] medicationArray;
+    private static final Medication[] medicationArray = new Medication[NUMBER_OF_CANISTERS];
 
 
     public MedicationScheduler() {
-        medicationArray = new Medication[NUMBER_OF_CANISTERS];
+        //medicationArray = new Medication[NUMBER_OF_CANISTERS];
         timeline = new Timeline();
         timeline.setCycleCount(1);
+    }
+
+    public static String[] getMedicationData() {
+        String[] ary = new String[5];
+        for(int i = 0; i < 5; i++) {
+            ary[i] = medicationArray[i].toString();
+        }
+        return ary;
     }
 
     public JSONObject pullMedicationArray() throws IOException {

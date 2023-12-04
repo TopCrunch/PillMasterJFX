@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -34,12 +35,18 @@ public class DebugController {
     public Button closeButton;
     public Button weightButton;
     public GridPane controlGrid;
+    public Label labelA;
+    public Label labelB;
+    public Label labelC;
+    public Label labelD;
+    public Label labelE;
     ArduinoController arduino;
 
     public DebugController() {
     }
 
     public void initialize() {
+        populateLabels();
     }
 
     public void bindArduino(ArduinoController arduino){
@@ -79,6 +86,15 @@ public class DebugController {
     public void closeWindow(ActionEvent e) throws SerialPortException {
         arduino.clearListener();
         ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
+    }
+
+    public void populateLabels() {
+        String[] ary = MedicationScheduler.getMedicationData();
+        labelA.setText(ary[0]);
+        labelB.setText(ary[1]);
+        labelC.setText(ary[2]);
+        labelD.setText(ary[3]);
+        labelE.setText(ary[4]);
     }
 
     @FXML
