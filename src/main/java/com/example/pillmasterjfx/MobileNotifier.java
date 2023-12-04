@@ -13,12 +13,15 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.Message;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class MobileNotifier {
+
+    private static final String PATH = "accessToken.txt";
     public void alert(Medication medication) throws FirebaseMessagingException {
         // This registration token comes from the client FCM SDKs.
         String registrationToken = "YOUR_REGISTRATION_TOKEN";
@@ -42,8 +45,15 @@ public class MobileNotifier {
     }
 
     public void sendEmail() {
-        final String username = "pillmaster191@gmail.com";
-        final String password = null;
+        ArrayList<String> values;
+        try {
+            values = getAccessKey(PATH);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        final String username = values.get(0);
+        final String password = values.get(1);
+        final String recipient = values.get(2);
 
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
@@ -53,7 +63,7 @@ public class MobileNotifier {
         Session session = Session.getInstance(prop,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
+                            return new PasswordAuthentication(username,password);
                     }
                 });
 
@@ -63,7 +73,7 @@ public class MobileNotifier {
             message.setFrom(new InternetAddress("from@gmail.com"));
             message.setRecipients(
                     Message.RecipientType.TO,
-                    InternetAddress.parse("5103684542@vtext.com")
+                    InternetAddress.parse(recipient)
             );
             message.setSubject("Testing Gmail TLS");
             message.setText("Test succeeded!");
@@ -75,6 +85,17 @@ public class MobileNotifier {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<String> getAccessKey(String path) throws IOException {
+        ArrayList<String> values = new ArrayList<>();
+        String line;
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            while((line = reader.readLine()) != null) {
+                values.add(line);
+            }
+        }
+        return values;
     }
 
     public void authenticate() throws IOException {
