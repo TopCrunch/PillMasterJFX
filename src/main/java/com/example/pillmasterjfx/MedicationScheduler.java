@@ -2,6 +2,7 @@ package com.example.pillmasterjfx;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -178,7 +179,14 @@ public class MedicationScheduler{
                                                 throw new RuntimeException(e);
                                             }
                                             if(!controller.failed()) {
-                                                medicationArray[finalIndex].popCount();
+                                                Medication currentMed =
+                                                        medicationArray[finalIndex];
+                                                currentMed.popCount();
+                                                if(currentMed.getCount() <= 0) {
+                                                    medicationArray[finalIndex] = null;
+                                                    uploadEmpty(currentMed);
+                                                    timeline.getKeyFrames().removeIf(frame -> frame.getName().contains(currentMed.getName()));
+                                                }
                                             } else {
                                                 uploadFailure(m.getName());
                                             }
@@ -216,7 +224,19 @@ public class MedicationScheduler{
         LocalDateTime now = LocalDateTime.now();
         NetworkClient client = new NetworkClient();
         if(client.postMedicationFail(name, now)) {
+            System.out.println("Failure of " + name + " uploaded");
+        }
+    }
 
+    private boolean uploadEmpty(Medication medication) {
+        LocalDateTime now = LocalDateTime.now();
+        JSONObject json = medication.toJSON();
+        json.put("name", medication.getName());
+        NetworkClient client = new NetworkClient();
+        if(client.postMedicationEmpty(json, now)) {
+            return true;
+        } else {
+            return false;
         }
     }
 

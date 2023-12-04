@@ -86,6 +86,33 @@ public class NetworkClient {
         return true;
     }
 
+    public boolean postMedicationEmpty(JSONObject json, LocalDateTime time) {
+        try{
+            HttpURLConnection con = initHTTPConnection(
+                    "empty.json"
+            );
+            con.setRequestProperty("Content-Type", "application/json; " +
+                    "charset=UTF-8");
+            con.setDoOutput(true);
+            con.setRequestMethod("POST");
+
+            OutputStream os = con.getOutputStream();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            json.put("timestamp", time.format(formatter));
+            os.write(json.toString().getBytes("UTF-8"));
+            os.close();
+            int code = con.getResponseCode();
+            System.out.println("Response Code: " + code);
+            if(code < 200 || code >= 300) {
+                return false;
+        }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+            return true;
+    }
+
     public HttpURLConnection initHTTPConnection() throws IOException {
         URL url = new URL(
                 "https://" + DATABASE + "."
