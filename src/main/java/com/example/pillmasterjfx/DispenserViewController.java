@@ -96,6 +96,7 @@ public class DispenserViewController {
     }
 
     private void closeWindow(ActionEvent e) {
+        player.close();
         ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
     }
 
