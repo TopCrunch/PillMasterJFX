@@ -24,6 +24,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
 import java.io.IOException;
+import java.security.SecureRandom;
 
 public class DispenserViewController {
     public ProgressBar countdownBar;
@@ -34,12 +35,16 @@ public class DispenserViewController {
     Timeline countdownTimer;
     AudioPlayer player;
     MobileNotifier notifier;
-    final Object block = new Object();
+    private final Object block = new Object();
 
     private static final String TEST_PIN = "0191";
 
     private boolean failed = false;
-    private boolean ready = false;
+    private final Object weightBlock = new Object();
+    private final Object tripBlock = new Object();
+
+    private double processedWeight = 0;
+    private int processedTrips = 0;
 
     public DispenserViewController() {
     }
@@ -87,8 +92,14 @@ public class DispenserViewController {
                         requestReady();
                         waitForArduino();
                         requestWeight();
+                        synchronized (weightBlock) {
+                            weightBlock.wait();
+                        }
                         //check if weight is correct (wait for it to be set)
-                        //requestTrip();
+                        requestTrip();
+                        synchronized (tripBlock) {
+                            tripBlock.wait();
+                        }
                         //check if trip is triggered
 
                         //if(errors) {
@@ -149,17 +160,25 @@ public class DispenserViewController {
     public void processSerial(String s) {
         //process response from arduino to determine what to do next
         String processed = s.replaceAll("([\\r\\n])", "");
-        switch (processed) {
-            case "Done" -> System.out.println("Arduino dispense done");
-            case "R" -> {
-                System.out.println("Arduino ready");
-                synchronized (block) {
-                    block.notify();
-                }
+        if ("Done".equals(processed)) {
+            System.out.println("Arduino dispense done");
+        } else if ("R".equals(processed)) {
+            System.out.println("Arduino ready");
+            synchronized (block) {
+                block.notify();
             }
-
-            case "T" -> System.err.println("TARE TIMEOUT, CHECK WIRING");
-            default -> System.out.println(processed);
+        } else if ("T".equals(processed)) {
+            System.err.println("TARE TIMEOUT, CHECK WIRING");
+        } else if (processed.contains("#")) {
+            System.out.println(processed.replace("#",""));
+            synchronized (weightBlock) {
+                tripBlock.notify();
+            }
+        } else if (processed.contains("@")){
+            System.out.println(processed.replace("@",""));
+            synchronized (tripBlock) {
+                tripBlock.notify();
+            }
         }
     }
 
@@ -196,6 +215,14 @@ public class DispenserViewController {
         arduino.write(SerialController.CONTROL_FLAG.makeSignal(
                 SerialController.CONTROL_FLAG.ALT,
                 SerialController.CONTROL_FLAG.WEIGHT
+        ));
+    }
+
+    private void requestTrip() {
+        System.out.println("Requesting Trip");
+        arduino.write(SerialController.CONTROL_FLAG.makeSignal(
+                SerialController.CONTROL_FLAG.ALT,
+                SerialController.CONTROL_FLAG.TRIP
         ));
     }
 
