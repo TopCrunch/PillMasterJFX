@@ -4,6 +4,9 @@ import javafx.animation.*;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -12,12 +15,18 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import jssc.SerialPortException;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
+
 public class DispenserViewController {
     public ProgressBar countdownBar;
     public Button dispenseButton;
     private Medication medication;
     private ArduinoController arduino;
     Timeline countdownTimer;
+    AudioPlayer player;
+    MobileNotifier notifier;
     final Object block = new Object();
 
     private boolean failed = false;
@@ -26,8 +35,12 @@ public class DispenserViewController {
     public DispenserViewController() {
     }
 
-    public void initialize() {
+    public void initialize() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        player = new AudioPlayer();
+        notifier = new MobileNotifier();
+        notifier.sendEmail();
 
+        player.play();
     }
 
     public void startCountdown() {
@@ -37,7 +50,7 @@ public class DispenserViewController {
                 new KeyFrame(Duration.seconds(10), e-> {
                     failed = true;
                     System.out.println("Countdown over. FAILED");
-                    ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
+                    closeWindow(e);
                 }, new KeyValue(countdownBar.progressProperty(), 0))
         );
         countdownTimer.setCycleCount(1);
@@ -45,7 +58,7 @@ public class DispenserViewController {
     }
 
     @FXML
-    public void onDispenseButtonClick() {
+    public void onDispenseButtonClick(ActionEvent e) {
         //initiate dispensing process
         countdownTimer.stop();
         Service<Integer> service = new Service<>() {
@@ -54,22 +67,36 @@ public class DispenserViewController {
                 return new Task<>() {
                     @Override
                     protected Integer call() throws Exception {
+
                         requestReady();
                         waitForArduino();
                         dispense();
                         requestReady();
                         waitForArduino();
                         requestWeight();
+                        //check if weight is correct (wait for it to be set)
+                        //requestTrip();
+                        //check if trip is triggered
+
+                        //if(errors) {
+                        //  display warning and wait
+                        // }
+
                         return null;
                     }
                 };
             }
         };
+        service.setOnSucceeded(event -> closeWindow(e));
         service.start();
     }
 
     public boolean failed() {
         return failed;
+    }
+
+    private void closeWindow(ActionEvent e) {
+        ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
     }
 
     public void processSerial(String s) {
@@ -106,7 +133,7 @@ public class DispenserViewController {
         arduino.clearListener();
     }
 
-    public void notifyMobile() {
+    public void notifyMobile(String content) {
         //send firebase alert with MEDICATION_NAME in payload
     }
 
