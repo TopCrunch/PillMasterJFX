@@ -10,24 +10,33 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import jssc.SerialPortException;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.awt.*;
 import java.io.IOException;
 
 public class DispenserViewController {
     public ProgressBar countdownBar;
     public Button dispenseButton;
+    public Label keypadLabel;
     private Medication medication;
     private ArduinoController arduino;
     Timeline countdownTimer;
     AudioPlayer player;
     MobileNotifier notifier;
     final Object block = new Object();
+
+    private static final String TEST_PIN = "0191";
 
     private boolean failed = false;
     private boolean ready = false;
@@ -68,6 +77,10 @@ public class DispenserViewController {
                     @Override
                     protected Integer call() throws Exception {
 
+                        synchronized (keypadLabel) {
+                            keypadLabel.wait();
+                        }
+
                         requestReady();
                         waitForArduino();
                         dispense();
@@ -89,6 +102,39 @@ public class DispenserViewController {
         };
         service.setOnSucceeded(event -> closeWindow(e));
         service.start();
+    }
+
+    @FXML
+    public void onKeypadButtonClick(ActionEvent e) {
+        String value = ((Button)e.getSource()).getText();
+        switch (value) {
+            case "GO":
+                if(keypadLabel.getText().compareTo(TEST_PIN) == 0) {
+                    synchronized (keypadLabel) {
+                        keypadLabel.notify();
+                    }
+                } else {
+                    keypadLabel.setStyle("-fx-border-color: red;");
+                }
+                break;
+            case "X":
+                keypadLabel.setStyle("");
+                if(keypadLabel.getText().length() > 0) {
+                    if(keypadLabel.getText().length() == 1) {
+                        keypadLabel.setText("");
+                    } else {
+                        keypadLabel.setText(keypadLabel.getText().substring(0,
+                                keypadLabel.getText().length() - 1));
+                    }
+                }
+                //delete
+                break;
+            default:
+                keypadLabel.setStyle("");
+                if(keypadLabel.getText().length() < 4) {
+                    keypadLabel.setText(keypadLabel.getText() + value);
+                }
+        }
     }
 
     public boolean failed() {
