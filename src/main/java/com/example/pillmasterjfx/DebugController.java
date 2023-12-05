@@ -103,6 +103,7 @@ public class DebugController {
 
     public void closeWindow(ActionEvent e) throws SerialPortException {
         arduino.clearListener();
+        player.close();
         ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
     }
 
