@@ -15,6 +15,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -30,6 +31,7 @@ public class DispenserViewController {
     public ProgressBar countdownBar;
     public Button dispenseButton;
     public Label keypadLabel;
+    public HBox keyPadBox;
     private Medication medication;
     private ArduinoController arduino;
     Timeline countdownTimer;
@@ -54,6 +56,9 @@ public class DispenserViewController {
         notifier = new MobileNotifier();
         notifier.sendEmail();
 
+        dispenseButton.managedProperty().bind(dispenseButton.visibleProperty());
+        keyPadBox.managedProperty().bind(keyPadBox.visibleProperty());
+
         player.play();
     }
 
@@ -75,6 +80,8 @@ public class DispenserViewController {
     public void onDispenseButtonClick(ActionEvent e) {
         //initiate dispensing process
         countdownTimer.stop();
+        dispenseButton.setVisible(false);
+        keyPadBox.setVisible(true);
         Service<Integer> service = new Service<>() {
             @Override
             protected Task<Integer> createTask() {
