@@ -62,7 +62,7 @@ public class DispenserViewController {
     public void initialize() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         player = new AudioPlayer();
         notifier = new MobileNotifier();
-        notifier.sendEmail();
+        notifier.sendEmail(medication.getName());
 
         dispenseButton.managedProperty().bind(dispenseButton.visibleProperty());
         keyPadBox.managedProperty().bind(keyPadBox.visibleProperty());
@@ -76,7 +76,7 @@ public class DispenserViewController {
         countdownTimer = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(countdownBar.progressProperty(), 1)),
-                new KeyFrame(Duration.seconds(10), e-> {
+                new KeyFrame(Duration.seconds(60), e-> {
                     failed = true;
                     System.out.println("Countdown over. FAILED");
                     closeWindow(e);

@@ -15,7 +15,7 @@ public class MobileNotifier {
 
     private static final String PATH = "accessToken.txt";
 
-    public void sendEmail() {
+    public void sendEmail(String name) {
         ArrayList<String> values;
         try {
             values = getAccessKey(PATH);
@@ -46,8 +46,8 @@ public class MobileNotifier {
                     Message.RecipientType.TO,
                     InternetAddress.parse(recipient)
             );
-            message.setSubject("Testing Gmail TLS");
-            message.setText("Test succeeded!");
+            message.setSubject("Pillmaster ALERT");
+            message.setText("Please take your " + name);
 
             Transport.send(message);
 
