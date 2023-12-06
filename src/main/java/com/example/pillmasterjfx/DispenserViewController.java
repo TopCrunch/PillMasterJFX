@@ -1,6 +1,7 @@
 package com.example.pillmasterjfx;
 
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -32,6 +33,8 @@ public class DispenserViewController {
     public Button dispenseButton;
     public Label keypadLabel;
     public HBox keyPadBox;
+    public Label weightLabel;
+    public Label tripLabel;
     private Medication medication;
     private ArduinoController arduino;
     Timeline countdownTimer;
@@ -42,6 +45,7 @@ public class DispenserViewController {
     private static final String TEST_PIN = "0191";
 
     private boolean failed = false;
+    private boolean error = false;
     private final Object weightBlock = new Object();
     private final Object tripBlock = new Object();
 
@@ -112,13 +116,33 @@ public class DispenserViewController {
                         //if(errors) {
                         //  display warning and wait
                         // }
+                        double diff = processedWeight - medication.getWeight();
+                        diff = Math.abs(diff);
+                        if(diff > medication.getWeight() * 0.25) {
+                            Platform.runLater(
+                                    () -> weightLabel.setText(
+                                "WARNING, WEIGHT"));
+                            error = true;
+                        }
+                        if(!(processedTrips == 1)) {
+                            Platform.runLater(() ->tripLabel.setText(
+                                    "WARNING," +
+                                    " TRIP"));
+                            error = true;
+                        }
 
                         return null;
                     }
                 };
             }
         };
-        service.setOnSucceeded(event -> closeWindow(e));
+        service.setOnSucceeded(event -> {
+            if(!error) {
+                closeWindow(e);
+            } else {
+                //do nothing
+            }
+        });
         service.start();
     }
 
@@ -129,6 +153,8 @@ public class DispenserViewController {
             case "GO":
                 if(keypadLabel.getText().compareTo(TEST_PIN) == 0) {
                     synchronized (keypadLabel) {
+                        keypadLabel.setText("");
+                        weightLabel.setText("Please wait...");
                         keypadLabel.notify();
                     }
                 } else {
@@ -159,6 +185,10 @@ public class DispenserViewController {
         return failed;
     }
 
+    public boolean error() {
+        return error;
+    }
+
     private void closeWindow(ActionEvent e) {
         player.close();
         ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
@@ -177,12 +207,16 @@ public class DispenserViewController {
         } else if ("T".equals(processed)) {
             System.err.println("TARE TIMEOUT, CHECK WIRING");
         } else if (processed.contains("#")) {
-            System.out.println(processed.replace("#",""));
+            String str = processed.replace("#","");
+            processedWeight = Double.parseDouble(str);
+            System.out.println(processedWeight);
             synchronized (weightBlock) {
                 weightBlock.notify();
             }
         } else if (processed.contains("@")){
-            System.out.println(processed.replace("@",""));
+            String str = processed.replace("@","");
+            processedTrips = Integer.parseInt(str);
+            System.out.println(processedTrips);
             synchronized (tripBlock) {
                 tripBlock.notify();
             }
@@ -204,10 +238,6 @@ public class DispenserViewController {
 
     public void clearListener() throws SerialPortException {
         arduino.clearListener();
-    }
-
-    public void notifyMobile(String content) {
-        //send firebase alert with MEDICATION_NAME in payload
     }
 
     private void requestReady() {
