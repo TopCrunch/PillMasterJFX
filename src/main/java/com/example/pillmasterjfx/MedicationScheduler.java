@@ -274,6 +274,7 @@ public class MedicationScheduler{
                         entry.getJSONArray("hours")
                 );
                 medication.setCanisterNumber(entry.getInt("canister"));
+                medication.setWeight(entry.getDouble("weight"));
                 medicationArray[medication.getCanisterNumber()] = medication;
             }
             i++;

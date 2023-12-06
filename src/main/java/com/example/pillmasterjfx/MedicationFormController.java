@@ -57,6 +57,7 @@ public class MedicationFormController {
     public HBox dayButtonGroup;
     public Button backButton;
     public HBox scheduleGroup;
+    public TextField weightField;
 
     private Medication medication;
 
@@ -119,6 +120,16 @@ public class MedicationFormController {
                 quantityField.setStyle(null);
             }
         });
+        weightField.textProperty().addListener((observable, oldValue, newValue) -> {
+            //restricts text entry to only numbers
+            if (!newValue.matches("\\d*")) {
+                weightField.setText(oldValue);
+            }
+            //resets red border if value is changed (only allowing nums)
+            if(weightField.getText().length() > 0){
+                weightField.setStyle(null);
+            }
+        });
     }
 
     @FXML
@@ -164,6 +175,11 @@ public class MedicationFormController {
         }
         if(quantityField.getText() == null | quantityField.getText().isEmpty()) {
             quantityField.setStyle("-fx-border-color: red; " +
+                    "-fx-border-width: 3px");
+            valuesEntered = false;
+        }
+        if(weightField.getText() == null | weightField.getText().isEmpty()) {
+            weightField.setStyle("-fx-border-color: red; " +
                     "-fx-border-width: 3px");
             valuesEntered = false;
         }
@@ -222,6 +238,7 @@ public class MedicationFormController {
                     tmpDay,
                     tmpTime
             );
+            medication.setWeight(Double.parseDouble(weightField.getText())/1000);
             System.out.println("Entry confirmed!");
             ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
         }

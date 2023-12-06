@@ -14,11 +14,20 @@
                   <Font size="20.0" />
                </font>
             </TextField>
-            <TextField fx:id="quantityField" alignment="CENTER" layoutX="30.0" layoutY="78.0" promptText="Enter medication quantity...">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </TextField>
+            <HBox alignment="CENTER" spacing="70.0">
+               <children>
+                  <TextField fx:id="quantityField" alignment="CENTER" promptText="Medication quantity...">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </TextField>
+                  <TextField fx:id="weightField" alignment="CENTER" layoutX="10.0" layoutY="10.0" promptText="Medication weight (mg)...">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </HBox>
             <HBox fx:id="dayButtonGroup" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
                   <ToggleButton fx:id="monButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDayButtonToggled" prefHeight="40.0" prefWidth="80.0" text="Mon">

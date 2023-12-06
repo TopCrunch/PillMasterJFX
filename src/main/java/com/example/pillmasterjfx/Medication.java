@@ -12,6 +12,16 @@ public class Medication {
     private final String name;
     private int count;
 
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    private double weight = 0;
+
     private int canisterNumber = -1;
     private ArrayList<DayOfWeek> dayOfWeek;
 
@@ -45,7 +55,8 @@ public class Medication {
 
     @Override
     public String toString() {
-        return String.format("%s, %d, can %d", name,count,canisterNumber);
+        return String.format("%s, %d, %.2f, can %d", name,count,
+                weight,canisterNumber);
     }
 
     public JSONObject toJSON() {
@@ -62,6 +73,7 @@ public class Medication {
         value.put("days", days);
         value.put("hours", hours);
         value.put("canister", canisterNumber);
+        value.put("weight", weight);
         return value;
     }
 

@@ -114,6 +114,7 @@ public class PillmasterController {
     public void addMedication(Medication medication) {
         int canister = medicationScheduler.checkoutCanister();
         if(canister >= 0) {
+            medication.setWeight(medication.getWeight());
             medication.setCanisterNumber(canister);
             System.out.println(canister + " added");
             System.out.println(medication.getName() + ": add to can " + canister);
