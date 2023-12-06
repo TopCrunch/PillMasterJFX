@@ -35,6 +35,7 @@ public class DispenserViewController {
     public HBox keyPadBox;
     public Label weightLabel;
     public Label tripLabel;
+    public HBox errorButtonsBox;
     private Medication medication;
     private ArduinoController arduino;
     Timeline countdownTimer;
@@ -46,8 +47,11 @@ public class DispenserViewController {
 
     private boolean failed = false;
     private boolean error = false;
+    private boolean retry = false;
     private final Object weightBlock = new Object();
     private final Object tripBlock = new Object();
+
+    private final Object errorBlock = new Object();
 
     private double processedWeight = 0;
     private int processedTrips = 0;
@@ -62,6 +66,8 @@ public class DispenserViewController {
 
         dispenseButton.managedProperty().bind(dispenseButton.visibleProperty());
         keyPadBox.managedProperty().bind(keyPadBox.visibleProperty());
+        countdownBar.managedProperty().bind(countdownBar.visibleProperty());
+        errorButtonsBox.managedProperty().bind(errorButtonsBox.visibleProperty());
 
         player.play();
     }
@@ -97,38 +103,36 @@ public class DispenserViewController {
                             keypadLabel.wait();
                         }
 
-                        requestReady();
-                        waitForArduino();
-                        dispense();
-                        requestReady();
-                        waitForArduino();
-                        requestWeight();
-                        synchronized (weightBlock) {
-                            weightBlock.wait();
+                        try {
+                            dispenseCycle();
+                        } catch (InterruptedException exception) {
+                            exception.printStackTrace();
                         }
-                        //check if weight is correct (wait for it to be set)
-                        requestTrip();
-                        synchronized (tripBlock) {
-                            tripBlock.wait();
-                        }
-                        //check if trip is triggered
 
-                        //if(errors) {
-                        //  display warning and wait
-                        // }
-                        double diff = processedWeight - medication.getWeight();
-                        diff = Math.abs(diff);
-                        if(diff > medication.getWeight() * 0.25) {
-                            Platform.runLater(
-                                    () -> weightLabel.setText(
-                                "WARNING, WEIGHT"));
-                            error = true;
+                        checkErrors();
+                        if(error) {
+                            Platform.runLater(() -> {
+                                errorButtonsBox.setVisible(true);
+                                countdownBar.setVisible(false);
+                            });
                         }
-                        if(!(processedTrips == 1)) {
-                            Platform.runLater(() ->tripLabel.setText(
-                                    "WARNING," +
-                                    " TRIP"));
-                            error = true;
+                        while(error) {
+                            synchronized (errorBlock) {
+                                errorBlock.wait();
+                            }
+                            if(retry) {
+                                try {
+                                    Platform.runLater(() -> {
+                                        weightLabel.setText("Please wait...");
+                                        tripLabel.setText("");
+                                    });
+                                    dispenseCycle();
+                                } catch (InterruptedException exception) {
+                                    exception.printStackTrace();
+                                }
+                                checkErrors();
+                                retry = false;
+                            }
                         }
 
                         return null;
@@ -144,6 +148,44 @@ public class DispenserViewController {
             }
         });
         service.start();
+    }
+
+    private void dispenseCycle() throws InterruptedException {
+        requestReady();
+        waitForArduino();
+        dispense();
+        requestReady();
+        waitForArduino();
+        requestWeight();
+        synchronized (weightBlock) {
+            weightBlock.wait();
+        }
+        //check if weight is correct (wait for it to be set)
+        requestTrip();
+        synchronized (tripBlock) {
+            tripBlock.wait();
+        }
+        //check if trip is triggered
+    }
+
+    private void checkErrors() {
+        //if(errors) {
+        //  display warning and wait
+        // }
+        double diff = processedWeight - medication.getWeight();
+        diff = Math.abs(diff);
+        if(diff > medication.getWeight() * 0.25) {
+            Platform.runLater(
+                    () -> weightLabel.setText(
+                            "WARNING, WEIGHT"));
+            error = true;
+        }
+        if(!(processedTrips == 1)) {
+            Platform.runLater(() ->tripLabel.setText(
+                    "WARNING," +
+                            " TRIP"));
+            error = true;
+        }
     }
 
     @FXML
@@ -178,6 +220,20 @@ public class DispenserViewController {
                 if(keypadLabel.getText().length() < 4) {
                     keypadLabel.setText(keypadLabel.getText() + value);
                 }
+        }
+    }
+
+    public void onFinishedClick(ActionEvent e) {
+        error = false;
+        synchronized (errorBlock) {
+            errorBlock.notify();
+        }
+    }
+
+    public void onReattemptClick() {
+        retry = true;
+        synchronized (errorBlock) {
+            errorBlock.notify();
         }
     }
 
