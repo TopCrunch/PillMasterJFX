@@ -172,7 +172,7 @@ public class DispenserViewController {
         } else if (processed.contains("#")) {
             System.out.println(processed.replace("#",""));
             synchronized (weightBlock) {
-                tripBlock.notify();
+                weightBlock.notify();
             }
         } else if (processed.contains("@")){
             System.out.println(processed.replace("@",""));
