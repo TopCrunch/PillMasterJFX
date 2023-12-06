@@ -173,6 +173,7 @@ public class MedicationScheduler{
                                         popup.initModality(Modality.APPLICATION_MODAL);
                                         popup.setOnShown(se -> {
                                             controller.startCountdown();
+                                            controller.sendEmail();
                                         });
                                         popup.setOnHidden(he -> {
                                             try {

@@ -62,7 +62,6 @@ public class DispenserViewController {
     public void initialize() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         player = new AudioPlayer();
         notifier = new MobileNotifier();
-        notifier.sendEmail(medication.getName());
 
         dispenseButton.managedProperty().bind(dispenseButton.visibleProperty());
         keyPadBox.managedProperty().bind(keyPadBox.visibleProperty());
@@ -148,6 +147,11 @@ public class DispenserViewController {
             }
         });
         service.start();
+    }
+
+    public void sendEmail() {
+
+        notifier.sendEmail(medication.getName());
     }
 
     private void dispenseCycle() throws InterruptedException {
